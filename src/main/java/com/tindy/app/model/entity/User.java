@@ -1,5 +1,6 @@
 package com.tindy.app.model.entity;
 
+import com.tindy.app.model.enums.RoleName;
 import com.tindy.app.model.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
     private String tokenVersion;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private RoleName role;
+
 }
