@@ -1,39 +1,88 @@
 package com.tindy.app.controller;
 
-import com.tindy.app.dto.request.LoginRequest;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindy.app.dto.request.UserRequest;
-import com.tindy.app.dto.respone.LoginRespone;
+
 import com.tindy.app.dto.respone.UserRespone;
+import com.tindy.app.exceptions.ForbiddenException;
+import com.tindy.app.model.entity.User;
 import com.tindy.app.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Slf4j
 public class AuthController {
-    @Autowired
-    private AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody  LoginRequest loginRequest){
-        LoginRespone loginResponse = authService.login(loginRequest.getPhone(), loginRequest.getPassword());
-        return ResponseEntity.accepted().body(loginResponse);
+    private final AuthService authService;
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getUsers(){
+        return ResponseEntity.ok().body(authService.getUser());
     }
 
-    public ResponseEntity<Object> register(@RequestBody UserRequest userRequest){
-        UserRespone userRespone = authService.register(userRequest);
-        return ResponseEntity.ok().body(userRespone);
+    @PostMapping("/register")
+    public ResponseEntity<UserRespone> register(@RequestBody UserRequest userRequest){
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/auth/register").toUriString());
+        return ResponseEntity.created(uri).body(authService.register(userRequest));
     }
-    @PostMapping("/logout")
-    public ResponseEntity<String> logoutUser(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        authService.logout(httpServletRequest, httpServletResponse);
-        return ResponseEntity.ok("Logout user successfully!");
+
+    @GetMapping("/refresh")
+    public void refreshToken(HttpServletResponse response, HttpServletRequest request) throws IOException {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
+            try {
+                String refresh_token = authorizationHeader.substring("Bearer ".length());
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(refresh_token);
+                String phone = decodedJWT.getSubject();
+                User user = authService.getUser(phone);
+                Collection<String> roles = new ArrayList<>();
+                roles.add(user.getRole().name());
+                String access_token = JWT.create()
+                        .withSubject(user.getPhone())
+                        .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
+                        .withIssuer(request.getRequestURL().toString())
+                        .withClaim("role", roles.stream().collect(Collectors.toList()))
+                        .sign(algorithm);
+                log.info("HieuLog: "+roles.stream().collect(Collectors.toList()));
+                Map<String,String> tokens = new HashMap<>();
+                tokens.put("access_token", access_token);
+                tokens.put("refresh_token", refresh_token);
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(),tokens);
+            }catch (Exception e){
+                response.setHeader("error", e.getMessage());
+                response.setStatus(FORBIDDEN.value());
+                Map<String,String> error = new HashMap<>();
+                error.put("error_message",e.getMessage());
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), error);
+            }
+        }else {
+            throw new ForbiddenException("Refresh token is missing");
+
+        }
     }
 }
