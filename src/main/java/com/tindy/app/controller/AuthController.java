@@ -82,7 +82,6 @@ public class AuthController {
             }
         }else {
             throw new ForbiddenException("Refresh token is missing");
-
         }
     }
 }

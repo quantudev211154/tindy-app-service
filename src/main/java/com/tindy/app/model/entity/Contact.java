@@ -1,12 +1,10 @@
 package com.tindy.app.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "contacts")
 @Entity
@@ -14,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Setter
 @Getter
+@ToString
 public class Contact {
 
     @Id
@@ -23,4 +22,8 @@ public class Contact {
     private String phone;
     private String email;
     private Date createdAt;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }
