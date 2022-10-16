@@ -5,6 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.AuthService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -53,28 +57,33 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authentication.getPrincipal();
 
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+
         try {
 
             String access_token = JWT.create()
-                    .withSubject(user.getUsername())
+                    .withClaim("phone", user.getUsername())
+                    .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
-                    .withIssuer(request.getRequestURL().toString())
                     .withClaim("role", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .sign(algorithm);
             String refresh_token = JWT.create()
-                    .withSubject(user.getUsername())
+                    .withClaim("phone", user.getUsername())
+                    .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() +30*60*1000))
-                    .withIssuer(request.getRequestURL().toString())
-//                .withClaim("role", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .sign(algorithm);
             response.setHeader("access_token", access_token);
-            response.setHeader("refresh_token", refresh_token);
+
+            Cookie refreshTokenCookie = new Cookie("REFRESH_TOKEN", refresh_token);
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setSecure(true);
+            refreshTokenCookie.setPath("/refresh_token");
+
+            response.addCookie(refreshTokenCookie);
 
             Map<String,Object> tokens = new HashMap<>();
             tokens.put("phone",user.getUsername());
             tokens.put("loginDate", new Date());
             tokens.put("access_token", access_token);
-            tokens.put("refresh_token", refresh_token);
             response.setContentType(APPLICATION_JSON_VALUE);
             new ObjectMapper().writeValue(response.getOutputStream(),tokens);
         }catch (Exception e){
