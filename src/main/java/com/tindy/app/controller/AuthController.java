@@ -13,6 +13,7 @@ import com.tindy.app.model.entity.User;
 import com.tindy.app.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,6 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class AuthController {
 
     private final AuthService authService;
@@ -41,7 +43,7 @@ public class AuthController {
         return ResponseEntity.ok().body(authService.getUser());
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<UserRespone> register(@RequestBody UserRequest userRequest){
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/auth/register").toUriString());
         return ResponseEntity.created(uri).body(authService.register(userRequest));

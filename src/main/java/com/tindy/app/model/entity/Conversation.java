@@ -24,7 +24,7 @@ public class Conversation {
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
     private Date createdAt;
-    private Date updateAt;
+    private Date updatedAt;
     @Enumerated(EnumType.STRING)
     private ConversationStatus status;
 }

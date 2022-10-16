@@ -7,6 +7,7 @@ import com.tindy.app.service.ContactService;
 import com.tindy.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,11 @@ import java.util.List;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class UserController {
     private final ContactService contactService;
     private final UserService userService;
-    @PostMapping("/contact")
+    @PostMapping(value = "/contacts", consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addContact(@RequestBody ContactRequest contactRequest){
         return ResponseEntity.ok().body(contactService.addContact(contactRequest));
     }
