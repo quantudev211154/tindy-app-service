@@ -64,14 +64,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     .withClaim("phone", user.getUsername())
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
-                    .withIssuer(request.getRequestURL().toString())
                     .withClaim("role", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .sign(algorithm);
             String refresh_token = JWT.create()
-                    .withSubject(user.getUsername())
+                    .withClaim("phone", user.getUsername())
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() +30*60*1000))
-                    .withIssuer(request.getRequestURL().toString())
                     .sign(algorithm);
             response.setHeader("access_token", access_token);
 
