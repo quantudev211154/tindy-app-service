@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ParticipantService {
 
-    ParticipantRespone addParticipantSingle(ParticipantRequest participantRequest);
-    ParticipantRespone addParticipantGroup(List<String> phoneList);
+//    ParticipantRespone addParticipantSingle(ParticipantRequest participantRequest);
+    Object addParticipantGroup(ParticipantRequest participantRequest);
     List<ParticipantRespone> getParticipant(Integer conversationId);
 }

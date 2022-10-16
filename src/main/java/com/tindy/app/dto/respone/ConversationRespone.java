@@ -7,16 +7,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 public class ConversationRespone {
+    private Integer id;
     private String title;
     private User creator;
     private Date createdAt;
     private Date updatedAt;
     private String status;
-
+    private List<ParticipantRespone> participants;
 }

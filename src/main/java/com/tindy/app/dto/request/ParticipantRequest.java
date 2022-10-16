@@ -8,11 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Date;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class ParticipantRequest {
 
     private Conversation conversation;
 
-    private User user;
+    private List<User> users;
 
     private String status;
     private Date createdAt;

@@ -14,11 +14,11 @@ import java.util.Date;
 @Getter
 public class ParticipantRespone {
 
+    private Integer id;
     private Conversation conversation;
-
     private User user;
-
     private Date createdAt;
     private Date updateAt;
     private String nickName;
+
 }

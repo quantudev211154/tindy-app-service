@@ -27,27 +27,43 @@ public class ParticipantServiceImpl implements ParticipantService {
     private final ConversationRepository conversationRepository;
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
+//    @Override
+//    public ParticipantRespone addParticipantSingle(ParticipantRequest participantRequest) {
+//        Participant participant = MapData.mapOne(participantRequest, Participant.class);
+//        Conversation conversation = conversationRepository.findById(participantRequest.getConversation().getId()).get();
+//        User user = userRepository.findByPhone(participantRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("Not found user!"));
+//        conversation.setTitle(user.getFullName());
+//        participant.setConversation(conversation);
+//        participant.setUser(user);
+//        participant.setType(ConversationType.SINGLE);
+//        participant.setCreatedAt(new Date(System.currentTimeMillis()));
+//        if(conversation.getCreator().getId().equals(user.getId())){
+//            participant.setRole(ParticipantRole.ADMIN);
+//        }else{
+//            participant.setRole(ParticipantRole.MEM);
+//        }
+//        return MapData.mapOne(participantRepository.save(participant), ParticipantRespone.class);
+//    }
+
     @Override
-    public ParticipantRespone addParticipantSingle(ParticipantRequest participantRequest) {
+    public Object addParticipantGroup(ParticipantRequest participantRequest) {
         Participant participant = MapData.mapOne(participantRequest, Participant.class);
         Conversation conversation = conversationRepository.findById(participantRequest.getConversation().getId()).get();
-        User user = userRepository.findByPhone(participantRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("Not found user!"));
-        conversation.setTitle(user.getFullName());
-        participant.setConversation(conversation);
-        participant.setUser(user);
-        participant.setType(ConversationType.SINGLE);
-        participant.setCreatedAt(new Date(System.currentTimeMillis()));
-        if(conversation.getCreator().getId().equals(user.getId())){
-            participant.setRole(ParticipantRole.ADMIN);
-        }else{
-            participant.setRole(ParticipantRole.MEM);
+
+        if(participantRequest.getUsers().size() > 2){
+            for(User user: participantRequest.getUsers()){
+                participant.setUser(user);
+                if(conversation.getCreator().getId() == user.getId()){
+                    participant.setRole(ParticipantRole.ADMIN);
+                }else{
+                    participant.setRole(ParticipantRole.MEM);
+                }
+                participant.setCreatedAt(new Date(System.currentTimeMillis()));
+                participant.setType(ConversationType.GROUP);
+                participantRepository.save(participant);
+            }
+
         }
-        return MapData.mapOne(participantRepository.save(participant), ParticipantRespone.class);
-    }
-
-    @Override
-    public ParticipantRespone addParticipantGroup(List<String> phone) {
-
 
         return null;
     }
