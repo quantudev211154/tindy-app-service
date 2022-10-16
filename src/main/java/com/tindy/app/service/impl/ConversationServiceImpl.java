@@ -1,7 +1,8 @@
 package com.tindy.app.service.impl;
 
 import com.tindy.app.dto.request.ConversationRequest;
-import com.tindy.app.dto.respone.ConversationRespone;
+
+import com.tindy.app.dto.respone.ConversationResponse;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.enums.ConversationStatus;
@@ -22,30 +23,30 @@ public class ConversationServiceImpl implements ConversationService {
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     @Override
-    public ConversationRespone createConversationSingle(ConversationRequest conversationRequest) {
+    public ConversationResponse createConversationSingle(ConversationRequest conversationRequest) {
         Conversation conversation = MapData.mapOne(conversationRequest,Conversation.class);
         conversation.setCreator(userRepository.findByPhone(conversationRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
         conversation.setCreatedAt(new Date(System.currentTimeMillis()));
         conversation.setStatus(ConversationStatus.ACTIVE);
         conversation.setType(ConversationType.SINGLE);
-        ConversationRespone conversationRespone = MapData.mapOne(conversationRepository.save(conversation),ConversationRespone.class);
-        return conversationRespone;
+        ConversationResponse conversationResponse = MapData.mapOne(conversationRepository.save(conversation),ConversationResponse.class);
+        return conversationResponse;
     }
 
     @Override
-    public ConversationRespone createConversationGroup(ConversationRequest conversationRequest) {
+    public ConversationResponse createConversationGroup(ConversationRequest conversationRequest) {
         Conversation conversation = MapData.mapOne(conversationRequest,Conversation.class);
         conversation.setCreator(userRepository.findByPhone(conversationRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
         conversation.setCreatedAt(new Date(System.currentTimeMillis()));
         conversation.setStatus(ConversationStatus.ACTIVE);
         conversation.setType(ConversationType.GROUP);
-        ConversationRespone conversationRespone = MapData.mapOne(conversationRepository.save(conversation),ConversationRespone.class);
+        ConversationResponse conversationRespone = MapData.mapOne(conversationRepository.save(conversation),ConversationResponse.class);
         return conversationRespone;
     }
 
     @Override
-    public List<ConversationRespone> getConversationsByPhone(String phone) {
+    public List<ConversationResponse> getConversationsByPhone(String phone) {
 
-        return MapData.mapList(conversationRepository.findConversationByCreatorId(userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("Not found")).getId()),ConversationRespone.class);
+        return MapData.mapList(conversationRepository.findConversationByCreatorId(userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("Not found")).getId()),ConversationResponse.class);
     }
 }

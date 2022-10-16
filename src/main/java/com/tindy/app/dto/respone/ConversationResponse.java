@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
-public class ConversationRespone {
+public class ConversationResponse {
     private Integer id;
     private String title;
     private User creator;
