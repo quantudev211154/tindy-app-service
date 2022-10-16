@@ -18,7 +18,6 @@ public class ParticipantRespone {
 
     private User user;
 
-    private ParticipantSatus status;
     private Date createdAt;
     private Date updateAt;
     private String nickName;

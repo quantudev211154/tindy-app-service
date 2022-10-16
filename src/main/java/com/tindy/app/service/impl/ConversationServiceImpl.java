@@ -5,6 +5,7 @@ import com.tindy.app.dto.respone.ConversationRespone;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.enums.ConversationStatus;
+import com.tindy.app.model.enums.ConversationType;
 import com.tindy.app.repository.ConversationRepository;
 import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.ConversationService;
@@ -21,11 +22,23 @@ public class ConversationServiceImpl implements ConversationService {
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     @Override
-    public ConversationRespone createConversation(ConversationRequest conversationRequest) {
+    public ConversationRespone createConversationSingle(ConversationRequest conversationRequest) {
         Conversation conversation = MapData.mapOne(conversationRequest,Conversation.class);
         conversation.setCreator(userRepository.findByPhone(conversationRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
         conversation.setCreatedAt(new Date(System.currentTimeMillis()));
         conversation.setStatus(ConversationStatus.ACTIVE);
+        conversation.setType(ConversationType.SINGLE);
+        ConversationRespone conversationRespone = MapData.mapOne(conversationRepository.save(conversation),ConversationRespone.class);
+        return conversationRespone;
+    }
+
+    @Override
+    public ConversationRespone createConversationGroup(ConversationRequest conversationRequest) {
+        Conversation conversation = MapData.mapOne(conversationRequest,Conversation.class);
+        conversation.setCreator(userRepository.findByPhone(conversationRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
+        conversation.setCreatedAt(new Date(System.currentTimeMillis()));
+        conversation.setStatus(ConversationStatus.ACTIVE);
+        conversation.setType(ConversationType.GROUP);
         ConversationRespone conversationRespone = MapData.mapOne(conversationRepository.save(conversation),ConversationRespone.class);
         return conversationRespone;
     }

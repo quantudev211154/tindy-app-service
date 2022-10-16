@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ParticipantController {
     private final ParticipantService participantService;
-    @PostMapping(value = "",consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
+
+    @PostMapping(value = "/single",consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addParticipant(@RequestBody ParticipantRequest participantRequest){
-        return ResponseEntity.ok().body(participantService.addParticipant(participantRequest));
+        return ResponseEntity.ok().body(participantService.addParticipantSingle(participantRequest));
     }
 
     @GetMapping("/{conversationId}")

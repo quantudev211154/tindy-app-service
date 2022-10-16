@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ConversationService {
 
-    ConversationRespone createConversation(ConversationRequest conversationRequest);
+    ConversationRespone createConversationSingle(ConversationRequest conversationRequest);
+    ConversationRespone createConversationGroup(ConversationRequest conversationRequest);
     List<ConversationRespone> getConversationsByPhone(String phone);
 }

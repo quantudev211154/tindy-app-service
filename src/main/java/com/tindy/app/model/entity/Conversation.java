@@ -1,6 +1,7 @@
 package com.tindy.app.model.entity;
 
 import com.tindy.app.model.enums.ConversationStatus;
+import com.tindy.app.model.enums.ConversationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,4 +28,6 @@ public class Conversation {
     private Date updatedAt;
     @Enumerated(EnumType.STRING)
     private ConversationStatus status;
+    @Enumerated(EnumType.STRING)
+    private ConversationType type;
 }
