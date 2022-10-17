@@ -45,8 +45,13 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public List<ConversationResponse> getConversationsByPhone(String phone) {
+    public List<ConversationResponse> getConversationsByUserId(String userId) {
 
-        return MapData.mapList(conversationRepository.findConversationByCreatorId(userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("Not found")).getId()),ConversationResponse.class);
+        return MapData.mapList(conversationRepository.findConversationByCreatorId(Integer.parseInt(userId)),ConversationResponse.class);
     }
+
+//    @Override
+//    public List<ConversationResponse> getConversationByU(String userId) {
+//        return null;
+//    }
 }

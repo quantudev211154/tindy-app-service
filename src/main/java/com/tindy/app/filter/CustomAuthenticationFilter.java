@@ -66,7 +66,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
 
         try {
-
             String access_token = JWT.create()
                     .withClaim("userId", userRespone.getId())
                     .withClaim("name", userRespone.getFullName())
@@ -94,7 +93,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             response.addCookie(refreshTokenCookie);
 
             Map<String,Object> tokens = new HashMap<>();
-            tokens.put("id",userRespone.getId().toString());
+            tokens.put("userId",userRespone.getId().toString());
             tokens.put("phone",user.getUsername());
             tokens.put("loginDate", new Date());
             tokens.put("accessToken", access_token);

@@ -17,8 +17,8 @@ public class ConversationController {
     public ResponseEntity<?> addConversationSingle(@RequestBody ConversationRequest conversationRequest){
         return ResponseEntity.ok().body(conversationService.createConversationSingle(conversationRequest));
     }
-    @GetMapping("/{phone}")
-    public ResponseEntity<?> getConversations(@PathVariable String phone){
-        return ResponseEntity.ok().body(conversationService.getConversationsByPhone(phone));
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getConversations(@PathVariable String userId){
+        return ResponseEntity.ok().body(conversationService.getConversationsByUserId(userId));
     }
 }

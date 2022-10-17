@@ -10,5 +10,6 @@ public interface ConversationService {
 
     ConversationResponse createConversationSingle(ConversationRequest conversationRequest);
     ConversationResponse createConversationGroup(ConversationRequest conversationRequest);
-    List<ConversationResponse> getConversationsByPhone(String phone);
+    List<ConversationResponse> getConversationsByUserId(String userId);
+//    List<ConversationResponse> getConversationByUserId(String userId);
 }
