@@ -43,17 +43,17 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), userService);
         customAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
-        corsConfiguration.setAllowCredentials(true);
-//        corsConfiguration.setAllowedOrigins();
-        corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
-        http.cors().configurationSource(request -> corsConfiguration).and().csrf().disable();
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+//        corsConfiguration.setAllowedOrigins(Arrays.asList("/**"));
+//        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
+//        corsConfiguration.setAllowCredentials(true);
+//        corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
+//        http.cors().configurationSource(request -> corsConfiguration).and().csrf().disable();
+        http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(POST ,"/api/auth/login/**","/api/auth/register/**").permitAll();
-        http.authorizeRequests().antMatchers(GET ,"/api/auth/refresh/**" ).permitAll();
+        http.authorizeRequests().antMatchers(GET ,"/api/auth/refresh_token/**" ).permitAll();
         http.authorizeRequests().antMatchers("/api/auth/users/**","/api/users/contacts/**","/api/conversations/**","/api/participants/**").hasAnyAuthority("USER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
@@ -68,8 +68,11 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8089", "http://127.0.0.1:5173")); // evn
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
