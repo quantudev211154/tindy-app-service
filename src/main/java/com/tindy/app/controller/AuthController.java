@@ -76,8 +76,8 @@ public class AuthController {
                         .withClaim("userId", user.getId())
                         .withClaim("name", user.getFullName())
                         .withClaim("phone", user.getPhone())
+                        .withIssuedAt(new Date())
                         .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
-                        .withIssuer(request.getRequestURL().toString())
                         .withClaim("role", roles.stream().collect(Collectors.toList()))
                         .sign(algorithm);
                 log.info("HieuLog: "+roles.stream().collect(Collectors.toList()));
