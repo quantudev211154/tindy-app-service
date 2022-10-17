@@ -52,12 +52,17 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public User getUser(String userName) {
-        return userRepository.findByPhone(userName).get();
+        return userRepository.findByPhone(userName).orElseThrow(()->new UsernameNotFoundException("Not found user"));
     }
 
     @Override
     public List<User> getUser() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public User getUserById(Integer id) {
+        return userRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Not found user"));
     }
 
 

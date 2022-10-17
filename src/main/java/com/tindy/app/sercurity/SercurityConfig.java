@@ -53,6 +53,8 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(POST ,"/api/auth/login/**","/api/auth/register/**").permitAll();
         http.authorizeRequests().antMatchers(GET ,"/api/auth/refresh_token/**" ).permitAll();
+
+//        http.authorizeRequests().antMatchers(GET ,"/api/auth/refresh/**" ).permitAll();
         http.authorizeRequests().antMatchers("/api/auth/users/**","/api/users/contacts/**","/api/conversations/**","/api/participants/**").hasAnyAuthority("USER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
@@ -68,6 +70,7 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173")); // evn
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

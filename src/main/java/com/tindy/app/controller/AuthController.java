@@ -55,7 +55,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-    @CrossOrigin("http://127.0.0.1:5173")
+//    @CrossOrigin("http://127.0.0.1:5173")
     @GetMapping("/refresh_token")
     public void refreshToken(HttpServletResponse response, HttpServletRequest request) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -65,12 +65,17 @@ public class AuthController {
                 Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
-                String phone = decodedJWT.getSubject();
-                User user = authService.getUser(phone);
+                String phone = String.valueOf(decodedJWT.getClaim("phone").toString());
+                log.info(phone);
+                Integer userId = Integer.parseInt(decodedJWT.getClaim("userId").toString());
+                User user = authService.getUserById(userId);
+
                 Collection<String> roles = new ArrayList<>();
                 roles.add(user.getRole().name());
                 String access_token = JWT.create()
-                        .withSubject(user.getPhone())
+                        .withClaim("userId", user.getId())
+                        .withClaim("name", user.getFullName())
+                        .withClaim("phone", user.getPhone())
                         .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("role", roles.stream().collect(Collectors.toList()))

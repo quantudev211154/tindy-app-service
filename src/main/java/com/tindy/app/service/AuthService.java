@@ -12,7 +12,7 @@ public interface AuthService {
     User getUser(String userName);
     List<User> getUser();
 
-
+    User getUserById(Integer id);
 
 
 }
