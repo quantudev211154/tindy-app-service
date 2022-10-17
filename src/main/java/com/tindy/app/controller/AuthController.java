@@ -55,7 +55,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-
+    @CrossOrigin("http://127.0.0.1:5173")
     @GetMapping("/refresh_token")
     public void refreshToken(HttpServletResponse response, HttpServletRequest request) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
