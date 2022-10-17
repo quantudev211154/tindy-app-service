@@ -1,7 +1,6 @@
 package com.tindy.app.service.impl;
 
 import com.tindy.app.dto.request.ParticipantRequest;
-import com.tindy.app.dto.respone.ConversationRespone;
 import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.exceptions.ResourceNotFoundException;
 import com.tindy.app.mapper.MapData;

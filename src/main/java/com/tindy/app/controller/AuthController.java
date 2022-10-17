@@ -44,9 +44,15 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register", consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<UserRespone> register(@RequestBody UserRequest userRequest){
+    public ResponseEntity<?> register(@RequestBody UserRequest userRequest){
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/auth/register").toUriString());
-        return ResponseEntity.created(uri).body(authService.register(userRequest));
+        try {
+            return ResponseEntity.created(uri).body(authService.register(userRequest));
+        }catch (Exception e){
+            Map<String,String> error = new HashMap<>();
+            error.put("error_message",e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 
     @GetMapping("/refresh")
