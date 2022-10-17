@@ -85,7 +85,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     .withExpiresAt(new Date(System.currentTimeMillis() +30*60*1000))
                     .sign(algorithm);
 
-            Cookie refreshTokenCookie = new Cookie("REFRESH_TOKEN", refresh_token);
+            Cookie refreshTokenCookie = new Cookie("refresh_token", refresh_token);
             refreshTokenCookie.setHttpOnly(true);
             refreshTokenCookie.setSecure(true);
             refreshTokenCookie.setPath("/refresh_token");
