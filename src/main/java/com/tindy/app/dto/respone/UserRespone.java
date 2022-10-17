@@ -17,5 +17,5 @@ public class UserRespone {
     private Date updatedAt;
     private String status;
     private String role;
-
+    private int tokenVersion;
 }

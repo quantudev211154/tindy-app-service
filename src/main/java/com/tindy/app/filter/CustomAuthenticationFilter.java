@@ -3,8 +3,10 @@ package com.tindy.app.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tindy.app.dto.respone.UserRespone;
 import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.AuthService;
+import com.tindy.app.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,12 +43,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     private final AuthenticationManager authenticationManager;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager){
+    private final UserService userService;
+
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService){
         this.authenticationManager = authenticationManager;
+        this.userService = userService;
     }
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String phone = request.getParameter("username");
+        String phone = request.getParameter("phone"); //change "username" to "phone"
         String password = request.getParameter("password");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phone, password);
         return authenticationManager.authenticate(authenticationToken);
@@ -56,22 +61,30 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
 
+        UserRespone userRespone = userService.getUserInfo(user.getUsername());
+
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
 
         try {
 
             String access_token = JWT.create()
-                    .withClaim("phone", user.getUsername())
+                    .withClaim("userId", userRespone.getId())
+                    .withClaim("name", userRespone.getFullName())
+                    .withClaim("phone", userRespone.getPhone())
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
                     .withClaim("role", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .sign(algorithm);
+            response.setHeader("access_token", access_token);
+
             String refresh_token = JWT.create()
-                    .withClaim("phone", user.getUsername())
+                    .withClaim("userId", userRespone.getId())
+                    .withClaim("name", userRespone.getFullName())
+                    .withClaim("phone", userRespone.getPhone())
+                    .withClaim("tokenVersion", userRespone.getTokenVersion())
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() +30*60*1000))
                     .sign(algorithm);
-            response.setHeader("access_token", access_token);
 
             Cookie refreshTokenCookie = new Cookie("REFRESH_TOKEN", refresh_token);
             refreshTokenCookie.setHttpOnly(true);
@@ -81,10 +94,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             response.addCookie(refreshTokenCookie);
 
             Map<String,Object> tokens = new HashMap<>();
+            tokens.put("id",userRespone.getId().toString());
             tokens.put("phone",user.getUsername());
             tokens.put("loginDate", new Date());
-            tokens.put("access_token", access_token);
+            tokens.put("accessToken", access_token);
             response.setContentType(APPLICATION_JSON_VALUE);
+
             new ObjectMapper().writeValue(response.getOutputStream(),tokens);
         }catch (Exception e){
             response.setHeader("error", e.getMessage());
