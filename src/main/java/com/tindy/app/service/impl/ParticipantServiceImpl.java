@@ -10,6 +10,7 @@ import com.tindy.app.model.entity.User;
 import com.tindy.app.model.enums.ConversationType;
 import com.tindy.app.model.enums.ParticipantRole;
 import com.tindy.app.model.enums.ParticipantSatus;
+import com.tindy.app.model.enums.ParticipantType;
 import com.tindy.app.repository.ConversationRepository;
 import com.tindy.app.repository.ParticipantRepository;
 import com.tindy.app.repository.UserRepository;
@@ -58,7 +59,7 @@ public class ParticipantServiceImpl implements ParticipantService {
                     participant.setRole(ParticipantRole.MEM);
                 }
                 participant.setCreatedAt(new Date(System.currentTimeMillis()));
-                participant.setType(ConversationType.GROUP);
+                participant.setType(ParticipantType.GROUP);
                 participantRepository.save(participant);
             }
 

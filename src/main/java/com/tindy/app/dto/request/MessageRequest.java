@@ -1,5 +1,6 @@
 package com.tindy.app.dto.request;
 
+import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,19 +8,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
-public class ConversationRequest {
-
-    private String title;
-    private User user;
-    private List<Integer> usersId;
+@Setter
+public class MessageRequest {
+    private Conversation conversation;
+    private User sender;
+    private String messageType;
+    private String message;
     private Date createdAt;
-    private Date updatedAt;
+    private boolean isDelete;
     private String status;
-
 }

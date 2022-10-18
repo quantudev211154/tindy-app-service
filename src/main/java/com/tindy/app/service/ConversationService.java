@@ -8,8 +8,7 @@ import java.util.List;
 
 public interface ConversationService {
 
-    ConversationResponse createConversationSingle(ConversationRequest conversationRequest);
-    ConversationResponse createConversationGroup(ConversationRequest conversationRequest);
+    ConversationResponse createConversation(ConversationRequest conversationRequest);
+
     List<ConversationResponse> getConversationsByUserId(String userId);
-//    List<ConversationResponse> getConversationByUserId(String userId);
 }
