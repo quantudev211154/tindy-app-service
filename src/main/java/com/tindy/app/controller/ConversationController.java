@@ -15,8 +15,10 @@ public class ConversationController {
     private final ConversationService conversationService;
     @PostMapping
     public ResponseEntity<?> addConversationSingle(@RequestBody ConversationRequest conversationRequest){
-        return ResponseEntity.ok().body(conversationService.createConversationSingle(conversationRequest));
+//        return ResponseEntity.ok().body(conversationService.createConversationSingle(conversationRequest));
+        return null;
     }
+
     @GetMapping("/{userId}")
     public ResponseEntity<?> getConversations(@PathVariable String userId){
         return ResponseEntity.ok().body(conversationService.getConversationsByUserId(userId));
