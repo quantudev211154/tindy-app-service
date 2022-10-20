@@ -18,4 +18,5 @@ public class UserRequest {
     private String role;
     private String status;
     private Integer tokenVersion = 0; // if request doesn't have tokenVersion, default value of tokenVersion in DB = 0
+
 }
