@@ -1,40 +1,25 @@
 package com.tindy.app.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tindy.app.dto.respone.UserRespone;
-import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.AuthService;
-import com.tindy.app.service.UserService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
+import com.tindy.app.utils.JWTTokenCreator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
@@ -42,12 +27,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final AuthService authService;
 
-    private final UserService userService;
-
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService){
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, AuthService authService){
         this.authenticationManager = authenticationManager;
-        this.userService = userService;
+        this.authService = authService;
     }
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -61,42 +45,22 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
 
-        UserRespone userRespone = userService.getUserInfo(user.getUsername());
+        com.tindy.app.model.entity.User userResponse = authService.getUser(user.getUsername());
 
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        JWTTokenCreator tokenCreator = new JWTTokenCreator(userResponse);
 
         try {
-            String access_token = JWT.create()
-                    .withClaim("userId", userRespone.getId())
-                    .withClaim("name", userRespone.getFullName())
-                    .withClaim("phone", userRespone.getPhone())
-                    .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
-                    .withClaim("role", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                    .sign(algorithm);
-            response.setHeader("access_token", access_token);
-
-            String refresh_token = JWT.create()
-                    .withClaim("userId", userRespone.getId())
-                    .withClaim("name", userRespone.getFullName())
-                    .withClaim("phone", userRespone.getPhone())
-                    .withClaim("tokenVersion", userRespone.getTokenVersion())
-                    .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(System.currentTimeMillis() +30*60*1000))
-                    .sign(algorithm);
-
-            Cookie refreshTokenCookie = new Cookie("refresh_token", refresh_token);
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setSecure(true);
-            refreshTokenCookie.setPath("/refresh_token");
-
-            response.addCookie(refreshTokenCookie);
+            String access_token = tokenCreator.createToken(JWTTokenCreator.TokenType.ACCESS_TOKEN);
+            String refresh_token = tokenCreator.createToken(JWTTokenCreator.TokenType.REFRESH_TOKEN);
 
             Map<String,Object> tokens = new HashMap<>();
-            tokens.put("userId",userRespone.getId().toString());
-            tokens.put("phone",user.getUsername());
+            tokens.put("name", userResponse.getFullName());
+            tokens.put("userId",userResponse.getId());
+            tokens.put("phone",userResponse.getPhone());
+            tokens.put("avatar", userResponse.getAvatar());
             tokens.put("loginDate", new Date());
             tokens.put("accessToken", access_token);
+            tokens.put("refreshToken", refresh_token);
             response.setContentType(APPLICATION_JSON_VALUE);
 
             new ObjectMapper().writeValue(response.getOutputStream(),tokens);

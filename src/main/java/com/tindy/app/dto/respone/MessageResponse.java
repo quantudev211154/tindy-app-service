@@ -1,25 +1,23 @@
-package com.tindy.app.dto.request;
+package com.tindy.app.dto.respone;
 
+import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.Date;
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class ConversationRequest {
-
-    private String title;
-    private User user;
-    private List<Integer> usersId;
+public class MessageResponse {
+    private Integer id;
+    private Conversation conversation;
+    private User sender;
+    private String type;
+    private String message;
     private Date createdAt;
-    private Date updatedAt;
+    private boolean isDelete;
     private String status;
-
 }

@@ -14,5 +14,6 @@ public class ContactRespone {
     private String fullName;
     private String phone;
     private String email;
+    private boolean isBlocked;
     private String createdAt;
 }

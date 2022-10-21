@@ -22,6 +22,7 @@ public class Contact {
     private String phone;
     private String email;
     private Date createdAt;
+    private boolean isBlocked;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

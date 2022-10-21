@@ -20,5 +20,5 @@ public class ConversationResponse {
     private Date createdAt;
     private Date updatedAt;
     private String status;
-    private List<ParticipantRespone> participants;
+    private String type;
 }

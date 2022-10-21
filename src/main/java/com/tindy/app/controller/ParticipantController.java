@@ -14,15 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class ParticipantController {
     private final ParticipantService participantService;
 
-//    @PostMapping(value = "/single",consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
-//    public ResponseEntity<?> addParticipant(@RequestBody ParticipantRequest participantRequest){
-//        return ResponseEntity.ok().body(participantService.addParticipantSingle(participantRequest));
-//    }
-//    @PostMapping(value = "/single",consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
-//    public ResponseEntity<?> addParticipant(@RequestBody ParticipantRequest participantRequest){
-//        return ResponseEntity.ok().body(participantService.addParticipantSingle(participantRequest));
-//    } // bug fix
-
     @GetMapping("/{conversationId}")
     public ResponseEntity<?> getParticipants(@PathVariable String conversationId){
         return ResponseEntity.ok().body(participantService.getParticipant(Integer.parseInt(conversationId)));

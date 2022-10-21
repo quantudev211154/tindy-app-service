@@ -7,10 +7,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindy.app.dto.request.UserRequest;
 
-import com.tindy.app.dto.respone.UserRespone;
 import com.tindy.app.exceptions.ForbiddenException;
 import com.tindy.app.model.entity.User;
 import com.tindy.app.service.AuthService;
+import com.tindy.app.utils.JWTTokenCreator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -18,16 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -55,47 +51,34 @@ public class AuthController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-//    @CrossOrigin("http://127.0.0.1:5173")
-    @GetMapping("/refresh_token")
-    public void refreshToken(HttpServletResponse response, HttpServletRequest request) throws IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
-            try {
-                String refresh_token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(refresh_token);
-                String phone = String.valueOf(decodedJWT.getClaim("phone").toString());
-                log.info(phone);
-                Integer userId = Integer.parseInt(decodedJWT.getClaim("userId").toString());
-                User user = authService.getUserById(userId);
 
-                Collection<String> roles = new ArrayList<>();
-                roles.add(user.getRole().name());
-                String access_token = JWT.create()
-                        .withClaim("userId", user.getId())
-                        .withClaim("name", user.getFullName())
-                        .withClaim("phone", user.getPhone())
-                        .withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
-                        .withIssuer(request.getRequestURL().toString())
-                        .withClaim("role", roles.stream().collect(Collectors.toList()))
-                        .sign(algorithm);
-                log.info("HieuLog: "+roles.stream().collect(Collectors.toList()));
-                Map<String,String> tokens = new HashMap<>();
-                tokens.put("access_token", access_token);
-                tokens.put("refresh_token", refresh_token);
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(),tokens);
-            }catch (Exception e){
-                response.setHeader("error", e.getMessage());
-                response.setStatus(FORBIDDEN.value());
-                Map<String,String> error = new HashMap<>();
-                error.put("error_message",e.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
-            }
-        }else {
-            throw new ForbiddenException("Refresh token is missing");
-        }
+    @CrossOrigin("http://127.0.0.1:5173")
+    @PostMapping(value = "/refresh_token", consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
+    public void refreshToken(HttpServletResponse response, HttpServletRequest request, @RequestBody Map<String, Object> body) throws IOException {
+        String refreshTokenFromRequest = body.get("refreshToken").toString();
+
+        if (refreshTokenFromRequest == null)
+            throw new ForbiddenException("Can not get your refresh Token");
+
+        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = verifier.verify(refreshTokenFromRequest);
+
+        Integer userId = Integer.parseInt(decodedJWT.getClaim("userId").asString());
+        Integer tokenVersion = Integer.parseInt(decodedJWT.getClaim("tokenVersion").asString());
+
+        User existingUser = authService.getUserById(userId);
+
+        if (!Objects.equals(existingUser.getTokenVersion(), tokenVersion))
+            throw new ForbiddenException("Your token Version is invalid");
+
+        JWTTokenCreator tokenCreator = new JWTTokenCreator(existingUser);
+        String newAccessToken = tokenCreator.createToken(JWTTokenCreator.TokenType.ACCESS_TOKEN);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", newAccessToken);
+        response.setContentType(APPLICATION_JSON_VALUE);
+
+        new ObjectMapper().writeValue(response.getOutputStream(),tokens);
     }
 }

@@ -25,6 +25,7 @@ public class ContactServiceImpl implements ContactService {
     public ContactRespone addContact(ContactRequest contactRequest) {
         Contact contact = MapData.mapOne(contactRequest,Contact.class);
         contact.setUser(userRepository.findByPhone(contactRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
+        contact.setBlocked(false);
         Contact contactSaved = contactRepository.save(contact);
         ContactRespone contactRespone = MapData.mapOne(contactSaved, ContactRespone.class);
         return contactRespone;

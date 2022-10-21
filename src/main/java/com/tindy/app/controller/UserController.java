@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,4 +44,15 @@ public class UserController {
             return null;
         }
     }
+    @PostMapping(value = "/profile/pic", consumes = "multipart/form-data")
+    public ResponseEntity<?> upload(@RequestParam("file")MultipartFile file, @RequestParam Integer userId){
+        log.info("upload image:  File Name : {}", file.getOriginalFilename());
+        return ResponseEntity.ok().body(userService.uploadFile(file, userId));
+    }
+
+//    @PostMapping("/profile/pic/{fileName}")
+//    public Object download(@PathVariable String fileName) throws IOException {
+//        logger.info("HIT -/download | File Name : {}", fileName);
+//        return fileService.download(fileName);
+//    }
 }

@@ -25,7 +25,8 @@ public class User {
     private String fullName;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
-    private String tokenVersion;
+    private Integer tokenVersion; // changed type of tokenVersion from "String" to "Integer"
+    private String avatar;
     @Enumerated(EnumType.STRING)
     private RoleName role;
 
@@ -103,11 +104,11 @@ public class User {
         this.status = status;
     }
 
-    public String getTokenVersion() {
+    public Integer getTokenVersion() {
         return tokenVersion;
     }
 
-    public void setTokenVersion(String tokenVersion) {
+    public void setTokenVersion(Integer tokenVersion) {
         this.tokenVersion = tokenVersion;
     }
 
@@ -117,5 +118,13 @@ public class User {
 
     public void setRole(RoleName role) {
         this.role = role;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

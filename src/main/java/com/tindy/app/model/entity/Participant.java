@@ -3,6 +3,7 @@ package com.tindy.app.model.entity;
 import com.tindy.app.model.enums.ConversationType;
 import com.tindy.app.model.enums.ParticipantRole;
 import com.tindy.app.model.enums.ParticipantSatus;
+import com.tindy.app.model.enums.ParticipantType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ public class Participant {
     private Date updatedAt;
     private String nickName;
     @Enumerated(EnumType.STRING)
-    private ConversationType type;
+    private ParticipantType type;
+    @Enumerated(EnumType.STRING)
     private ParticipantRole role;
 }

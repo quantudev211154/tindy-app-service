@@ -15,5 +15,6 @@ public class ContactRequest {
     private String phone;
     private String email;
     private String createdAt;
+    private boolean isBlocked;
     private User user;
 }
