@@ -1,6 +1,7 @@
 package com.tindy.app.controller;
 
 import com.tindy.app.dto.request.ContactRequest;
+import com.tindy.app.dto.request.UserRequest;
 import com.tindy.app.dto.respone.ContactRespone;
 import com.tindy.app.dto.respone.UserRespone;
 import com.tindy.app.service.ContactService;
@@ -29,11 +30,15 @@ public class UserController {
     }
 
     @GetMapping("/contacts")
-    public ResponseEntity<?> getContactsByPhone(@RequestParam String phone){
+    public ResponseEntity<?> getContactsByPhone(@RequestParam String userId){
 
-        return ResponseEntity.ok().body(contactService.getContactsByPhone(phone));
+        return ResponseEntity.ok().body(contactService.getContactsByUser(Integer.parseInt(userId)));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> modifyUser(@RequestBody UserRequest userRequest, @PathVariable String id){
+        return ResponseEntity.ok().body(userService.updateUser(userRequest, Integer.parseInt(id)));
+    }
     @GetMapping("/{phone}")
     public UserRespone getUserInfo(@PathVariable String phone){
         try {

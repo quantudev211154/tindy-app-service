@@ -7,6 +7,7 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class UserRequest {
 
     private String phone;

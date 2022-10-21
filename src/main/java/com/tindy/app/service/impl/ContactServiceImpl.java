@@ -32,13 +32,28 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<ContactRespone> getContactsByPhone(String phone) {
-//        for(Contact contact : contactRepository.findContactsByUserPhone(phone)){
-//            log.info("HieuLog: "+contact.toString());
-//        }
-        log.info("Hieu log"+ phone);
-        User user = userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("Not found user"));
-        log.info("Hieu Log: "+user.getId());
-        return MapData.mapList(contactRepository.findContactsByUserId(user.getId()),ContactRespone.class);
+    public List<ContactRespone> getContactsByUser(Integer userId) {
+        return MapData.mapList(contactRepository.findContactsByUserId(userId),ContactRespone.class);
+    }
+
+    @Override
+    public ContactRespone updateContact(ContactRequest contactRequest, Integer contactId) {
+        Contact contact = contactRepository.findById(contactId).orElseThrow(() -> new UsernameNotFoundException("Not found contact"));
+        if(contactRequest.getFullName() != null){
+            contact.setFullName(contactRequest.getFullName());
+        }
+        return MapData.mapOne(contactRepository.save(contact), ContactRespone.class);
+    }
+
+    @Override
+    public void deleteContact(Integer contactId) {
+        contactRepository.delete(contactRepository.findById(contactId).orElseThrow(()-> new UsernameNotFoundException("Contact not found")));
+    }
+
+    @Override
+    public ContactRespone blockContact(Integer contactId) {
+        Contact contact = contactRepository.findById(contactId).orElseThrow(()-> new UsernameNotFoundException("Contact not found"));
+        contact.setBlocked(true);
+        return MapData.mapOne(contactRepository.save(contact),ContactRespone.class);
     }
 }

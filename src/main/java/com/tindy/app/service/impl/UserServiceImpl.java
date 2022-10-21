@@ -6,6 +6,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.tindy.app.dto.request.UserRequest;
 import com.tindy.app.dto.respone.UserRespone;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.User;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -60,6 +62,27 @@ public class UserServiceImpl implements UserService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public UserRespone updateUser(UserRequest userRequest, Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("Not found"));
+        user.setUpdatedAt(new Date(System.currentTimeMillis()));
+        log.info("HieuLog: "+userRequest.toString());
+
+        if(userRequest.getEmail() != null){
+            user.setEmail(userRequest.getEmail());
+            log.info("HieuLog: "+userRequest.toString());
+
+        }
+        if(userRequest.getFullName() != null){
+            user.setFullName(userRequest.getFullName());
+            log.info(user.toString());
+
+        }
+        User userUpdated = userRepository.save(user);
+
+        return MapData.mapOne(userUpdated, UserRespone.class);
     }
 
 

@@ -49,7 +49,7 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(POST ,"/api/auth/refresh_token/**" ).permitAll();
 
 //        http.authorizeRequests().antMatchers(GET ,"/api/auth/refresh/**" ).permitAll();
-        http.authorizeRequests().antMatchers("/api/auth/users/**","/api/users/contacts/**","/api/conversations/**","/api/participants/**","/api/messages/**").hasAnyAuthority("USER");
+        http.authorizeRequests().antMatchers("/api/auth/users/**","/api/users/contacts/**","/api/conversations/**","/api/participants/**","/api/messages/**","/api/contacts/**").hasAnyAuthority("USER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
