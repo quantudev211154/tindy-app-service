@@ -26,6 +26,7 @@ public class Conversation {
     private User creator;
     private Date createdAt;
     private Date updatedAt;
+    private String avatar;
     @Enumerated(EnumType.STRING)
     private ConversationStatus status;
     @Enumerated(EnumType.STRING)

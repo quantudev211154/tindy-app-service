@@ -64,8 +64,8 @@ public class AuthController {
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(refreshTokenFromRequest);
 
-        Integer userId = Integer.parseInt(decodedJWT.getClaim("userId").asString());
-        Integer tokenVersion = Integer.parseInt(decodedJWT.getClaim("tokenVersion").asString());
+        Integer userId = decodedJWT.getClaim("userId").asInt();
+        Integer tokenVersion = decodedJWT.getClaim("tokenVersion").asInt();
 
         User existingUser = authService.getUserById(userId);
 

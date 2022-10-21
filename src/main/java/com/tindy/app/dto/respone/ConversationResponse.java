@@ -21,4 +21,5 @@ public class ConversationResponse {
     private Date updatedAt;
     private String status;
     private String type;
+    private String avatar;
 }
