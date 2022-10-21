@@ -29,7 +29,7 @@ public class JWTTokenCreator {
         switch (tokenType){
             case ACCESS_TOKEN: {
                 returnToken = JWT.create()
-                        .withClaim("userId", user.getId().toString())
+                        .withClaim("userId", user.getId())
                         .withClaim("name", user.getFullName())
                         .withClaim("phone", user.getPhone())
                         .withIssuedAt(new Date(System.currentTimeMillis()))
@@ -41,10 +41,10 @@ public class JWTTokenCreator {
 
             case REFRESH_TOKEN: {
                 returnToken = JWT.create()
-                        .withClaim("userId", user.getId().toString())
+                        .withClaim("userId", user.getId())
                         .withClaim("name", user.getFullName())
                         .withClaim("phone", user.getPhone())
-                        .withClaim("tokenVersion", user.getTokenVersion().toString())
+                        .withClaim("tokenVersion", user.getTokenVersion())
                         .withClaim("roles", new ArrayList<>(rolesOfUser))
                         .withIssuedAt(new Date(System.currentTimeMillis()))
                         .withExpiresAt(new Date(System.currentTimeMillis() +3000*60*1000))

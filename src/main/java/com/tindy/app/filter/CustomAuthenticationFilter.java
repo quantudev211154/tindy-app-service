@@ -55,7 +55,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
             Map<String,Object> tokens = new HashMap<>();
             tokens.put("name", userResponse.getFullName());
-            tokens.put("userId",userResponse.getId().toString());
+            tokens.put("userId",userResponse.getId());
             tokens.put("phone",userResponse.getPhone());
             tokens.put("avatar", userResponse.getAvatar());
             tokens.put("loginDate", new Date());
