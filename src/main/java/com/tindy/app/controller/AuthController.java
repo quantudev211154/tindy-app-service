@@ -75,7 +75,8 @@ public class AuthController {
         JWTTokenCreator tokenCreator = new JWTTokenCreator(existingUser);
         String newAccessToken = tokenCreator.createToken(JWTTokenCreator.TokenType.ACCESS_TOKEN);
 
-        Map<String, String> tokens = new HashMap<>();
+        Map<String, Object> tokens = new HashMap<>();
+        tokens.put("user", existingUser);
         tokens.put("accessToken", newAccessToken);
         response.setContentType(APPLICATION_JSON_VALUE);
 
