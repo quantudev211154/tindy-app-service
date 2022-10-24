@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
     private static final String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/tindy-app-service.appspot.com/o/%s?alt=media&token=%s";
     private final UserRepository userRepository;
     @Override
-    public UserRespone getUserInfo(String phone) {
-        return MapData.mapOne(userRepository.findByPhone(phone).orElseThrow(()->new UsernameNotFoundException("User is not found!")),UserRespone.class);
+    public UserRespone getUserInfo(Integer id) {
+        return MapData.mapOne(userRepository.findById(id).orElseThrow(()->new UsernameNotFoundException("User is not found!")),UserRespone.class);
     }
 
     @Override

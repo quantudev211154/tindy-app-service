@@ -39,11 +39,10 @@ public class UserController {
     public ResponseEntity<?> modifyUser(@RequestBody UserRequest userRequest, @PathVariable String id){
         return ResponseEntity.ok().body(userService.updateUser(userRequest, Integer.parseInt(id)));
     }
-    @GetMapping("/{phone}")
-    public UserRespone getUserInfo(@PathVariable String phone){
+    @GetMapping("/{id}")
+    public UserRespone getUserInfo(@PathVariable String id){
         try {
-            log.info(phone);
-            return userService.getUserInfo(phone);
+            return userService.getUserInfo(Integer.parseInt(id));
         }catch (Exception e){
             new UsernameNotFoundException(e.getMessage());
             return null;
