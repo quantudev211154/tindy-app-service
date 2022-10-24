@@ -2,21 +2,17 @@ package com.tindy.app.service.impl;
 
 import com.tindy.app.dto.request.ParticipantRequest;
 import com.tindy.app.dto.respone.ParticipantRespone;
-import com.tindy.app.exceptions.ResourceNotFoundException;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.entity.Participant;
 import com.tindy.app.model.entity.User;
-import com.tindy.app.model.enums.ConversationType;
 import com.tindy.app.model.enums.ParticipantRole;
-import com.tindy.app.model.enums.ParticipantSatus;
 import com.tindy.app.model.enums.ParticipantType;
 import com.tindy.app.repository.ConversationRepository;
 import com.tindy.app.repository.ParticipantRepository;
 import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

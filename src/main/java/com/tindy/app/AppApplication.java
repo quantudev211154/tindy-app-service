@@ -1,8 +1,5 @@
 package com.tindy.app;
 
-import com.tindy.app.dto.request.UserRequest;
-import com.tindy.app.service.AuthService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -22,15 +19,5 @@ public class AppApplication {
 	PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();
 	}
-//	@Bean
-//	CommandLineRunner runner(AuthService authService){
-//		UserRequest userRequest = new UserRequest();
-//		userRequest.setPhone("098813123");
-//		userRequest.setEmail("axy2@gmail.com");
-//		userRequest.setPassword("12312");
-//		userRequest.setFullName("Hieu Tran");
-//		return args -> {
-//			authService.register(userRequest);
-//		};
-//	}
+
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.File;
 import java.util.Date;
 
 @Setter
@@ -16,7 +17,7 @@ public class AttachmentRequest {
 
     private Message message;
     private String thumbnail;
-    private String fileUrl;
+//    private File file;
     private Date createdAt;
     private Date updatedAt;
 }
