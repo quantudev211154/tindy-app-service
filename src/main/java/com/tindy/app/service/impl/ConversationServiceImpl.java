@@ -3,6 +3,7 @@ package com.tindy.app.service.impl;
 import com.tindy.app.dto.request.ConversationRequest;
 
 import com.tindy.app.dto.respone.ConversationResponse;
+import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.entity.Participant;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,8 +64,12 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public List<ConversationResponse> getConversationsByUserId(String userId) {
-
-        return MapData.mapList(conversationRepository.findConversationByCreatorId(Integer.parseInt(userId)),ConversationResponse.class);
+        List<ConversationResponse> conversationResponses = MapData.mapList(conversationRepository.findConversationByCreatorId(Integer.parseInt(userId)),ConversationResponse.class);
+        for(ConversationResponse conversations : conversationResponses){
+            List<Participant> participants = participantRepository.getParticipantByConversationId(conversations.getId());
+            conversations.setParticipantRespones(MapData.mapList(participants, ParticipantRespone.class));
+        }
+        return conversationResponses;
     }
 
 }
