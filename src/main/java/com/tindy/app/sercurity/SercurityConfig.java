@@ -49,7 +49,7 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(POST ,"/api/auth/refresh_token/**" ).permitAll();
 
 //        http.authorizeRequests().antMatchers(GET ,"/api/auth/refresh/**" ).permitAll();
-        http.authorizeRequests().antMatchers("/api/auth/users/**","/api/users/contacts/**","/api/conversations/**","/api/participants/**","/api/messages/**").hasAnyAuthority("USER");
+        http.authorizeRequests().antMatchers("/api/auth/users/**","/api/users/contacts/**","/api/conversations/**","/api/participants/**","/api/messages/**","/api/contacts/**").hasAnyAuthority("USER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -66,7 +66,7 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Set-Cookie", "Authorization", "Cache-Control", "Content-Type"));
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173")); // evn
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173","http://localhost:5173")); // evn
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration.applyPermitDefaultValues());

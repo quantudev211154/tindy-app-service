@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -24,21 +25,58 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public ContactRespone addContact(ContactRequest contactRequest) {
         Contact contact = MapData.mapOne(contactRequest,Contact.class);
-        contact.setUser(userRepository.findByPhone(contactRequest.getUser().getPhone()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
+        User user = userRepository.findById(contactRequest.getUser().getId()).orElseThrow(()-> new UsernameNotFoundException("User not found!"));
+//        contact.setAvatar(userRepository.findByPhone(contactRequest.getPhone()).orElseThrow(() -> new UsernameNotFoundException("User not found!")).getAvatar());
+        contact.setUser(user);
         contact.setBlocked(false);
+        contact.setCreatedAt(new Date(System.currentTimeMillis()));
         Contact contactSaved = contactRepository.save(contact);
         ContactRespone contactRespone = MapData.mapOne(contactSaved, ContactRespone.class);
         return contactRespone;
     }
 
     @Override
-    public List<ContactRespone> getContactsByPhone(String phone) {
-//        for(Contact contact : contactRepository.findContactsByUserPhone(phone)){
-//            log.info("HieuLog: "+contact.toString());
-//        }
-        log.info("Hieu log"+ phone);
-        User user = userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("Not found user"));
-        log.info("Hieu Log: "+user.getId());
-        return MapData.mapList(contactRepository.findContactsByUserId(user.getId()),ContactRespone.class);
+    public List<ContactRespone> getContactsByUser(Integer userId) {
+        List<ContactRespone> contactRespones = MapData.mapList(contactRepository.findContactsByUserId(userId),ContactRespone.class);
+        for(ContactRespone contactRespone : contactRespones){
+            contactRespone.setAvatar(userRepository.findByPhone(contactRespone.getPhone()).orElseThrow(() -> new UsernameNotFoundException("User not found!")).getAvatar());
+        }
+
+        return contactRespones;
+    }
+
+    @Override
+    public ContactRespone updateContact(ContactRequest contactRequest, Integer contactId) {
+        Contact contact = contactRepository.findById(contactId).orElseThrow(() -> new UsernameNotFoundException("Not found contact"));
+        if(contactRequest.getFullName() != null){
+            contact.setFullName(contactRequest.getFullName());
+        }
+        return MapData.mapOne(contactRepository.save(contact), ContactRespone.class);
+    }
+
+    @Override
+    public void deleteContact(Integer contactId) {
+        contactRepository.delete(contactRepository.findById(contactId).orElseThrow(()-> new UsernameNotFoundException("Contact not found")));
+    }
+
+    @Override
+    public ContactRespone blockContact(Integer contactId) {
+        Contact contact = contactRepository.findById(contactId).orElseThrow(()-> new UsernameNotFoundException("Contact not found"));
+        contact.setBlocked(true);
+        return MapData.mapOne(contactRepository.save(contact),ContactRespone.class);
+    }
+
+    @Override
+    public ContactRespone unBlockContact(Integer contactId) {
+        Contact contact = contactRepository.findById(contactId).orElseThrow(()-> new UsernameNotFoundException("Contact not found"));
+        contact.setBlocked(false);
+        return MapData.mapOne(contactRepository.save(contact),ContactRespone.class);
+    }
+
+    @Override
+    public ContactRespone getContactDetail(Integer contactId) {
+        ContactRespone contactRespone = MapData.mapOne(contactRepository.findById(contactId).orElseThrow(()-> new UsernameNotFoundException("Not found contact!")),ContactRespone.class);
+        contactRespone.setAvatar(userRepository.findByPhone(contactRespone.getPhone()).orElseThrow(() -> new UsernameNotFoundException("User not found!")).getAvatar());
+        return contactRespone;
     }
 }

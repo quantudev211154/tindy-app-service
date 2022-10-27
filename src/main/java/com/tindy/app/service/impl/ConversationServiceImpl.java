@@ -1,8 +1,8 @@
 package com.tindy.app.service.impl;
 
 import com.tindy.app.dto.request.ConversationRequest;
-
 import com.tindy.app.dto.respone.ConversationResponse;
+import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.entity.Participant;
@@ -62,8 +62,12 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public List<ConversationResponse> getConversationsByUserId(String userId) {
-
-        return MapData.mapList(conversationRepository.findConversationByCreatorId(Integer.parseInt(userId)),ConversationResponse.class);
+        List<ConversationResponse> conversationResponses = MapData.mapList(conversationRepository.findConversationByCreatorId(Integer.parseInt(userId)),ConversationResponse.class);
+        for(ConversationResponse conversations : conversationResponses){
+            List<Participant> participants = participantRepository.getParticipantByConversationId(conversations.getId());
+            conversations.setParticipantRespones(MapData.mapList(participants, ParticipantRespone.class));
+        }
+        return conversationResponses;
     }
 
 }

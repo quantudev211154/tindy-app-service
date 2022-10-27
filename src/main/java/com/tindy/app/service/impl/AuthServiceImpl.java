@@ -2,7 +2,6 @@ package com.tindy.app.service.impl;
 
 import com.tindy.app.dto.request.UserRequest;
 import com.tindy.app.dto.respone.UserRespone;
-import com.tindy.app.exceptions.ResourceNotFoundException;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.User;
 import com.tindy.app.model.enums.RoleName;

@@ -30,16 +30,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private RoleName role;
 
-    @OneToMany(mappedBy = "creator")
-    private List<Conversation> conversations;
-
-    @OneToMany(mappedBy = "user")
-    private List<Participant> participants;
-    @OneToMany(mappedBy = "sender")
-    private List<Message> messages;
-    @OneToMany(mappedBy = "user")
-    private List<UserContact> userContacts;
-
     public Integer getId() {
         return id;
     }

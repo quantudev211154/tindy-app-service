@@ -1,11 +1,15 @@
 package com.tindy.app.controller;
 
+import com.tindy.app.dto.request.AttachmentRequest;
 import com.tindy.app.dto.request.MessageRequest;
 import com.tindy.app.dto.respone.MessageResponse;
+import com.tindy.app.model.entity.Attachments;
+import com.tindy.app.service.AttachmentService;
 import com.tindy.app.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,7 +20,7 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
-
+    private final AttachmentService attachmentService;
     @PostMapping
     public ResponseEntity<MessageResponse> saveMessage(@RequestBody MessageRequest messageRequest){
         return ResponseEntity.ok().body(messageService.saveMessage(messageRequest));
@@ -27,5 +31,9 @@ public class MessageController {
         return ResponseEntity.ok().body(messageResponses);
     }
 
+    @PostMapping("/attachments")
+    public ResponseEntity<?> saveAttachment(@RequestParam("file")MultipartFile file, @RequestParam Integer messageId ){
+        return ResponseEntity.ok().body(attachmentService.saveAttachment(messageId,file));
+    }
 
 }
