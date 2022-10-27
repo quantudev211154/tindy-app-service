@@ -1,7 +1,6 @@
 package com.tindy.app.service.impl;
 
 import com.tindy.app.dto.request.ConversationRequest;
-
 import com.tindy.app.dto.respone.ConversationResponse;
 import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.mapper.MapData;
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

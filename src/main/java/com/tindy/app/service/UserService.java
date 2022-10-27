@@ -8,4 +8,5 @@ public interface UserService {
     UserRespone getUserInfo(Integer id);
     UserRespone uploadFile(MultipartFile multipartFile, Integer userId);
     UserRespone updateUser(UserRequest userRequest, Integer userId);
+    UserRespone getUserInfoByPhone(String phone);
 }

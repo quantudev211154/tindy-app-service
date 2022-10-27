@@ -71,4 +71,9 @@ public class UserServiceImpl implements UserService {
 
         return MapData.mapOne(userUpdated, UserRespone.class);
     }
+
+    @Override
+    public UserRespone getUserInfoByPhone(String phone) {
+        return MapData.mapOne(userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("Not found user")), UserRespone.class);
+    }
 }

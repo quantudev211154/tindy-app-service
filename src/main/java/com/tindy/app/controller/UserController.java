@@ -48,6 +48,10 @@ public class UserController {
             return null;
         }
     }
+    @GetMapping("/{phone}")
+    public UserRespone getUserInfoByPhone(@PathVariable String phone){
+        return userService.getUserInfoByPhone(phone);
+    }
     @PostMapping(value = "/profile/pic", consumes = "multipart/form-data")
     public ResponseEntity<?> upload(@RequestParam("file")MultipartFile file, @RequestParam Integer userId){
         log.info("upload image:  File Name : {}", file.getOriginalFilename());
