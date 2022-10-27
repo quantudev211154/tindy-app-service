@@ -64,5 +64,14 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         return userRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Not found user"));
     }
 
+    @Override
+    public boolean checkPhoneExist(String phone) {
+        if(userRepository.findByPhone(phone).orElse(null) != null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 
 }

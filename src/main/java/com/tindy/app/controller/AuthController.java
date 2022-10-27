@@ -13,6 +13,7 @@ import com.tindy.app.service.AuthService;
 import com.tindy.app.utils.JWTTokenCreator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -81,5 +82,13 @@ public class AuthController {
         response.setContentType(APPLICATION_JSON_VALUE);
 
         new ObjectMapper().writeValue(response.getOutputStream(),tokens);
+    }
+    @GetMapping("/exist")
+    public ResponseEntity<?> checkPhoneExist(@RequestParam String phone){
+        if(authService.checkPhoneExist(phone)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone is exist");
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body("Phone is not exist");
+        }
     }
 }

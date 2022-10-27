@@ -11,8 +11,7 @@ public interface AuthService {
     UserRespone register(UserRequest user);
     User getUser(String userName);
     List<User> getUser();
-
     User getUserById(Integer id);
-
+    boolean checkPhoneExist(String phone);
 
 }
