@@ -48,8 +48,8 @@ public class UserController {
             return null;
         }
     }
-    @GetMapping("/{phone}")
-    public UserRespone getUserInfoByPhone(@PathVariable String phone){
+    @GetMapping()
+    public UserRespone getUserInfoByPhone(@RequestParam String phone){
         return userService.getUserInfoByPhone(phone);
     }
     @PostMapping(value = "/profile/pic", consumes = "multipart/form-data")
