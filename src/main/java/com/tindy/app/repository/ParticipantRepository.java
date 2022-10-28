@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
     List<Participant> getParticipantByConversationId(Integer conversationId);
+    List<Participant> getParticipantByUserId(Integer userId);
 }

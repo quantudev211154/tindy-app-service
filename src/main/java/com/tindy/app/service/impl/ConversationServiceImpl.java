@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,7 +63,11 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public List<ConversationResponse> getConversationsByUserId(String userId) {
-        List<ConversationResponse> conversationResponses = MapData.mapList(conversationRepository.findConversationByCreatorId(Integer.parseInt(userId)),ConversationResponse.class);
+        List<Conversation> conversationsTemp = new ArrayList<>();
+        for (Participant participant: participantRepository.getParticipantByUserId(Integer.parseInt(userId)) ){
+            conversationsTemp.add(participant.getConversation());
+        }
+        List<ConversationResponse> conversationResponses = MapData.mapList(conversationsTemp,ConversationResponse.class);
         for(ConversationResponse conversations : conversationResponses){
             List<Participant> participants = participantRepository.getParticipantByConversationId(conversations.getId());
             conversations.setParticipantRespones(MapData.mapList(participants, ParticipantRespone.class));

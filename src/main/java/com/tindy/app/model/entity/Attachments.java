@@ -24,4 +24,5 @@ public class Attachments {
     private String fileUrl;
     private Date createdAt;
     private Date updatedAt;
+    private String fileName;
 }
