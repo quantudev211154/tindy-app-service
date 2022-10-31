@@ -16,7 +16,7 @@ import java.util.List;
 public class ConversationResponse {
     private Integer id;
     private String title;
-    private User creator;
+    private UserRespone creator;
     private Date createdAt;
     private Date updatedAt;
     private String status;

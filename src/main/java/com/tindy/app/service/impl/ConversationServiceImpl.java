@@ -37,7 +37,7 @@ public class ConversationServiceImpl implements ConversationService {
         conversation.setCreator(userRepository.findById(conversationRequest.getUser().getId()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
         conversation.setCreatedAt(new Date(System.currentTimeMillis()));
         conversation.setStatus(ConversationStatus.ACTIVE);
-        if(conversationRequest.getUsersId().size() < 2){
+        if(conversationRequest.getUsersId().size() <= 2){
             conversation.setType(ConversationType.SINGLE);
         }else {
             conversation.setType(ConversationType.GROUP);
@@ -55,6 +55,9 @@ public class ConversationServiceImpl implements ConversationService {
                 participant.setRole(ParticipantRole.ADMIN);
             }else {
                 participant.setRole(ParticipantRole.MEM);
+                if(conversationRequest.getUsersId().size() <= 2){
+                    conversationResponse.setAvatar(participant.getUser().getAvatar());
+                }
             }
             participant.setCreatedAt(new Date(System.currentTimeMillis()));
             if(conversationRequest.getUsersId().size() > 2){

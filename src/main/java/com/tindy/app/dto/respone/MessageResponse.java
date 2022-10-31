@@ -14,7 +14,7 @@ import java.util.Date;
 public class MessageResponse {
     private Integer id;
     private Conversation conversation;
-    private User sender;
+    private UserRespone sender;
     private String type;
     private String message;
     private Date createdAt;
