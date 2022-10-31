@@ -22,5 +22,5 @@ public class ConversationResponse {
     private String status;
     private String type;
     private String avatar;
-    private List<ParticipantRespone> participantRespones;
+    private List<ParticipantRespone> participantResponse;
 }

@@ -15,9 +15,8 @@ public class ConversationController {
     private final ConversationService conversationService;
 
     @PostMapping
-    public ResponseEntity<?> addConversationSingle(@RequestBody ConversationRequest conversationRequest){
-//        return ResponseEntity.ok().body(conversationService.createConversationSingle(conversationRequest));
-        return null;
+    public ResponseEntity<?> addConversation(@RequestBody ConversationRequest conversationRequest){
+        return ResponseEntity.ok().body(conversationService.createConversation(conversationRequest));
     }
 
     @GetMapping("/{userId}")

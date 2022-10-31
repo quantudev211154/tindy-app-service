@@ -33,11 +33,18 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     public ConversationResponse createConversation(ConversationRequest conversationRequest) {
         Conversation conversation = new Conversation();
+        conversation.setTitle(conversationRequest.getTitle());
         conversation.setCreator(userRepository.findById(conversationRequest.getUser().getId()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
         conversation.setCreatedAt(new Date(System.currentTimeMillis()));
         conversation.setStatus(ConversationStatus.ACTIVE);
-        conversation.setType(ConversationType.SINGLE);
+        if(conversationRequest.getUsersId().size() < 2){
+            conversation.setType(ConversationType.SINGLE);
+        }else {
+            conversation.setType(ConversationType.GROUP);
+
+        }
         ConversationResponse conversationResponse = MapData.mapOne(conversationRepository.save(conversation),ConversationResponse.class);
+        List<ParticipantRespone> participantRespones = new ArrayList<>();
         for(Integer id : conversationRequest.getUsersId()){
             System.out.println(id);
             Participant participant = new Participant();
@@ -55,9 +62,9 @@ public class ConversationServiceImpl implements ConversationService {
             }else {
                 participant.setType(ParticipantType.SINGLE);
             }
-            participantRepository.save(participant);
+            participantRespones.add(MapData.mapOne(participantRepository.save(participant),ParticipantRespone.class));
         }
-
+        conversationResponse.setParticipantResponse(participantRespones);
         return conversationResponse;
     }
 
@@ -70,7 +77,7 @@ public class ConversationServiceImpl implements ConversationService {
         List<ConversationResponse> conversationResponses = MapData.mapList(conversationsTemp,ConversationResponse.class);
         for(ConversationResponse conversations : conversationResponses){
             List<Participant> participants = participantRepository.getParticipantByConversationId(conversations.getId());
-            conversations.setParticipantRespones(MapData.mapList(participants, ParticipantRespone.class));
+            conversations.setParticipantResponse(MapData.mapList(participants, ParticipantRespone.class));
         }
         return conversationResponses;
     }
