@@ -21,5 +21,5 @@ public class ConversationRequest {
     private Date createdAt;
     private Date updatedAt;
     private String status;
-
+    private String avatar;
 }

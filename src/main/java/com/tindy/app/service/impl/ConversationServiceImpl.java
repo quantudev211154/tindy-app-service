@@ -41,7 +41,7 @@ public class ConversationServiceImpl implements ConversationService {
             conversation.setType(ConversationType.SINGLE);
         }else {
             conversation.setType(ConversationType.GROUP);
-
+            conversation.setAvatar(conversationRequest.getAvatar());
         }
         ConversationResponse conversationResponse = MapData.mapOne(conversationRepository.save(conversation),ConversationResponse.class);
         List<ParticipantRespone> participantRespones = new ArrayList<>();
