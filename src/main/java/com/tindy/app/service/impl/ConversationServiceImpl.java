@@ -2,6 +2,7 @@ package com.tindy.app.service.impl;
 
 import com.tindy.app.dto.request.ConversationRequest;
 import com.tindy.app.dto.respone.ConversationResponse;
+import com.tindy.app.dto.respone.MessageResponse;
 import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
@@ -87,7 +88,7 @@ public class ConversationServiceImpl implements ConversationService {
             if(message == null){
                 conversations.setMessageLatest(null);
             }else {
-                conversations.setMessageLatest(message.getMessage());
+                conversations.setMessageLatest(MapData.mapOne(message, MessageResponse.class));
 
             }
             List<Participant> participants = participantRepository.getParticipantByConversationId(conversations.getId());
