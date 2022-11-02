@@ -9,4 +9,5 @@ public interface MessageService {
     MessageResponse saveMessage(MessageRequest messageRequest);
     List<MessageResponse> getMessages(Integer conversationId);
 
+    MessageResponse deleteMessage(Integer messageId);
 }

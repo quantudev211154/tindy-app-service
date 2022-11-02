@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
@@ -41,5 +43,12 @@ public class MessageServiceImpl implements MessageService {
         List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
 
         return MapData.mapList(messages,MessageResponse.class);
+    }
+
+    @Override
+    public MessageResponse deleteMessage(Integer messageId) {
+        MessageResponse messageResponse = MapData.mapOne(messageRepository.findById(messageId).orElse(null), MessageResponse.class);
+        messageResponse.setDelete(true);
+        return messageResponse;
     }
 }

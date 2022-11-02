@@ -42,4 +42,9 @@ public class MessageController {
     public ResponseEntity<?> downloadAttachment(@PathVariable String messageId, @RequestParam String fileName) throws IOException {
         return ResponseEntity.ok().body(attachmentService.downloadAttachment(Integer.parseInt(messageId),fileName));
     }
+
+    @PostMapping("/recall/{id}")
+    public ResponseEntity<?> deleteMessage(@PathVariable Integer id){
+        return ResponseEntity.ok().body(messageService.deleteMessage(id));
+    }
 }
