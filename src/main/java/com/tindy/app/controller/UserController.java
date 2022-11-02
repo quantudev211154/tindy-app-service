@@ -4,6 +4,7 @@ import com.tindy.app.dto.request.ContactRequest;
 import com.tindy.app.dto.request.UserRequest;
 import com.tindy.app.dto.respone.ContactRespone;
 import com.tindy.app.dto.respone.UserRespone;
+import com.tindy.app.mapper.MapData;
 import com.tindy.app.service.ContactService;
 import com.tindy.app.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,17 @@ public class UserController {
 
     @PostMapping("/change/password/{phone}")
     public ResponseEntity<?> changePassword(@PathVariable String phone, @RequestParam String oldPassword, @RequestParam String newPassword){
-        return ResponseEntity.ok().body(userService.changePassword(phone,oldPassword,newPassword));
+        try {
+            UserRespone userRespone = MapData.mapOne(userService.changePassword(phone,oldPassword,newPassword), UserRespone.class);
+            if(userRespone != null){
+                return ResponseEntity.ok().body(userRespone);
+            }else {
+                return ResponseEntity.badRequest().body("Something is wrong");
+            }
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Something is wrong");
+
+        }
     }
 //    @PostMapping("/profile/pic/{fileName}")
 //    public Object download(@PathVariable String fileName) throws IOException {
