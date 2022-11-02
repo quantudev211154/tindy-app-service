@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 @RestController
 @RequestMapping("/api/contacts")
 @CrossOrigin
@@ -29,7 +31,7 @@ public class ContactController {
     }
     @PostMapping("/unblock/{id}")
     public ResponseEntity<?> unBlockContact(@PathVariable String id){
-        return ResponseEntity.ok().body(contactService.blockContact(Integer.parseInt(id)));
+        return ResponseEntity.ok().body(contactService.unBlockContact(Integer.parseInt(id)));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteContact(@PathVariable String id){
@@ -44,5 +46,14 @@ public class ContactController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getContactDetail(@PathVariable String id){
         return ResponseEntity.ok().body(contactService.getContactDetail(Integer.parseInt(id)));
+    }
+
+    @PostMapping("/exist")
+    public ResponseEntity<?> isContactExist(@RequestParam String phone, @RequestParam String userId){
+        if(contactService.isContactExist(phone,Integer.valueOf(userId))){
+            return ResponseEntity.badRequest().body("Contact is exist");
+        }else {
+            return ResponseEntity.ok().body("Contact is not exist");
+        }
     }
 }

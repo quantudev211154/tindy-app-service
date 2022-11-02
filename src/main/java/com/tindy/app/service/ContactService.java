@@ -14,4 +14,6 @@ public interface ContactService {
     ContactRespone blockContact(Integer contactId);
     ContactRespone unBlockContact(Integer contactId);
     ContactRespone getContactDetail(Integer contactId);
+
+    Boolean isContactExist(String phone, Integer userId);
 }
