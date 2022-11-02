@@ -5,12 +5,14 @@ import com.tindy.app.dto.respone.ConversationResponse;
 import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
+import com.tindy.app.model.entity.Message;
 import com.tindy.app.model.entity.Participant;
 import com.tindy.app.model.enums.ConversationStatus;
 import com.tindy.app.model.enums.ConversationType;
 import com.tindy.app.model.enums.ParticipantRole;
 import com.tindy.app.model.enums.ParticipantType;
 import com.tindy.app.repository.ConversationRepository;
+import com.tindy.app.repository.MessageRepository;
 import com.tindy.app.repository.ParticipantRepository;
 import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.ConversationService;
@@ -30,42 +32,44 @@ public class ConversationServiceImpl implements ConversationService {
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
     private final ConversationRepository conversationRepository;
+    private final MessageRepository messageRepository;
+
     @Override
     public ConversationResponse createConversation(ConversationRequest conversationRequest) {
         Conversation conversation = new Conversation();
         conversation.setTitle(conversationRequest.getTitle());
-        conversation.setCreator(userRepository.findById(conversationRequest.getUser().getId()).orElseThrow(()-> new UsernameNotFoundException("User not found!")));
+        conversation.setCreator(userRepository.findById(conversationRequest.getUser().getId()).orElseThrow(() -> new UsernameNotFoundException("User not found!")));
         conversation.setCreatedAt(new Date(System.currentTimeMillis()));
         conversation.setStatus(ConversationStatus.ACTIVE);
-        if(conversationRequest.getUsersId().size() <= 2){
+        if (conversationRequest.getUsersId().size() <= 2) {
             conversation.setType(ConversationType.SINGLE);
-        }else {
+        } else {
             conversation.setType(ConversationType.GROUP);
             conversation.setAvatar(conversationRequest.getAvatar());
         }
-        ConversationResponse conversationResponse = MapData.mapOne(conversationRepository.save(conversation),ConversationResponse.class);
+        ConversationResponse conversationResponse = MapData.mapOne(conversationRepository.save(conversation), ConversationResponse.class);
         List<ParticipantRespone> participantRespones = new ArrayList<>();
-        for(Integer id : conversationRequest.getUsersId()){
+        for (Integer id : conversationRequest.getUsersId()) {
             System.out.println(id);
             Participant participant = new Participant();
-            participant.setConversation(MapData.mapOne(conversationResponse,Conversation.class));
-            participant.setUser(userRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Not found user")));
+            participant.setConversation(MapData.mapOne(conversationResponse, Conversation.class));
+            participant.setUser(userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Not found user")));
             System.out.println(conversationRequest.getUser().getId() == id);
-            if(conversationRequest.getUser().getId()  == id){
+            if (conversationRequest.getUser().getId() == id) {
                 participant.setRole(ParticipantRole.ADMIN);
-            }else {
+            } else {
                 participant.setRole(ParticipantRole.MEM);
-                if(conversationRequest.getUsersId().size() <= 2){
+                if (conversationRequest.getUsersId().size() <= 2) {
                     conversationResponse.setAvatar(participant.getUser().getAvatar());
                 }
             }
             participant.setCreatedAt(new Date(System.currentTimeMillis()));
-            if(conversationRequest.getUsersId().size() > 2){
+            if (conversationRequest.getUsersId().size() > 2) {
                 participant.setType(ParticipantType.GROUP);
-            }else {
+            } else {
                 participant.setType(ParticipantType.SINGLE);
             }
-            participantRespones.add(MapData.mapOne(participantRepository.save(participant),ParticipantRespone.class));
+            participantRespones.add(MapData.mapOne(participantRepository.save(participant), ParticipantRespone.class));
         }
         conversationResponse.setParticipantResponse(participantRespones);
         return conversationResponse;
@@ -74,14 +78,22 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     public List<ConversationResponse> getConversationsByUserId(String userId) {
         List<Conversation> conversationsTemp = new ArrayList<>();
-        for (Participant participant: participantRepository.getParticipantByUserId(Integer.parseInt(userId)) ){
+        for (Participant participant : participantRepository.getParticipantByUserId(Integer.parseInt(userId))) {
             conversationsTemp.add(participant.getConversation());
         }
-        List<ConversationResponse> conversationResponses = MapData.mapList(conversationsTemp,ConversationResponse.class);
-        for(ConversationResponse conversations : conversationResponses){
+        List<ConversationResponse> conversationResponses = MapData.mapList(conversationsTemp, ConversationResponse.class);
+        for (ConversationResponse conversations : conversationResponses) {
+            Message message = messageRepository.findTopByConversationIdOrderByCreatedAtDesc(conversations.getId()).orElse(null);
+            if(message == null){
+                conversations.setMessageLatest(null);
+            }else {
+                conversations.setMessageLatest(message.getMessage());
+
+            }
             List<Participant> participants = participantRepository.getParticipantByConversationId(conversations.getId());
             conversations.setParticipantResponse(MapData.mapList(participants, ParticipantRespone.class));
         }
+
         return conversationResponses;
     }
 

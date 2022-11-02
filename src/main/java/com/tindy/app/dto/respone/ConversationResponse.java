@@ -23,4 +23,5 @@ public class ConversationResponse {
     private String type;
     private String avatar;
     private List<ParticipantRespone> participantResponse;
+    private String messageLatest;
 }
