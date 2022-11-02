@@ -10,6 +10,8 @@ import com.tindy.app.dto.request.UserRequest;
 import com.tindy.app.exceptions.ForbiddenException;
 import com.tindy.app.model.entity.User;
 import com.tindy.app.service.AuthService;
+import com.tindy.app.service.UserService;
+import com.tindy.app.service.impl.UploadService;
 import com.tindy.app.utils.JWTTokenCreator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +37,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class AuthController {
 
     private final AuthService authService;
-
+    private final UserService userService;
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(){
         return ResponseEntity.ok().body(authService.getUser());
@@ -90,5 +92,12 @@ public class AuthController {
         }else{
             return ResponseEntity.status(HttpStatus.OK).body("Phone is not exist");
         }
+    }
+    @PostMapping("/forgot/password/{phone}")
+    public ResponseEntity<?> changeForgetPassword(@PathVariable String phone){
+        if(userService.changeForgetPassword(phone)){
+            return ResponseEntity.ok().body("Password is changed!");
+        }
+        return ResponseEntity.badRequest().body("Something is wrong!");
     }
 }

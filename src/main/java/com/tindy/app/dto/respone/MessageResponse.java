@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -20,4 +22,5 @@ public class MessageResponse {
     private Date createdAt;
     private boolean isDelete;
     private String status;
+    private List<AttachmentResponse> attachmentResponseList;
 }

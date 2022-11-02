@@ -9,6 +9,7 @@ import com.tindy.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UploadService uploadService;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public UserRespone getUserInfo(Integer id) {
         return MapData.mapOne(userRepository.findById(id).orElseThrow(()->new UsernameNotFoundException("User is not found!")),UserRespone.class);
@@ -75,5 +77,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRespone getUserInfoByPhone(String phone) {
         return MapData.mapOne(userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("Not found user")), UserRespone.class);
+    }
+
+    @Override
+    public Boolean changeForgetPassword(String phone) {
+        try {
+            User user = userRepository.findByPhone(phone).orElseThrow(() -> new UsernameNotFoundException("User not exist"));
+            user.setPassword(passwordEncoder.encode(phone));
+            userRepository.save(user);
+            return true;
+        }catch (Exception e){
+            return  false;
+        }
+    }
+
+    @Override
+    public UserRespone changePassword(String phone, String oldPassword,String newPassword) {
+
+        User user = userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("User not exist"));
+        String passwordEncode = passwordEncoder.encode(oldPassword);
+        if(passwordEncoder.matches(oldPassword,user.getPassword())){
+            user.setPassword(passwordEncoder.encode(newPassword));
+            return MapData.mapOne(userRepository.save(user), UserRespone.class);
+        }
+        return null;
     }
 }

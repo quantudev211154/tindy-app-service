@@ -58,6 +58,10 @@ public class UserController {
         return ResponseEntity.ok().body(userService.uploadFile(file, userId));
     }
 
+    @PostMapping("/change/password/{phone}")
+    public ResponseEntity<?> changePassword(@PathVariable String phone, @RequestParam String oldPassword, @RequestParam String newPassword){
+        return ResponseEntity.ok().body(userService.changePassword(phone,oldPassword,newPassword));
+    }
 //    @PostMapping("/profile/pic/{fileName}")
 //    public Object download(@PathVariable String fileName) throws IOException {
 //        logger.info("HIT -/download | File Name : {}", fileName);

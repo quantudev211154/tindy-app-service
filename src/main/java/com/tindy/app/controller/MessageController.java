@@ -22,9 +22,16 @@ public class MessageController {
 
     private final MessageService messageService;
     private final AttachmentService attachmentService;
-    @PostMapping
-    public ResponseEntity<MessageResponse> saveMessage(@RequestBody MessageRequest messageRequest){
-        return ResponseEntity.ok().body(messageService.saveMessage(messageRequest));
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<MessageResponse> saveMessage(@RequestParam String conversationId,@RequestParam String senderId,
+                                                       @RequestParam String messageType, @RequestParam String message, @RequestParam("file") List<MultipartFile> file) throws IOException {
+
+        if(file.size() > 1){
+            return ResponseEntity.ok().body(messageService.saveMessage(conversationId,senderId,messageType, message,file));
+        }else{
+            return ResponseEntity.ok().body(messageService.saveMessage(conversationId,senderId,messageType, message,null));
+
+        }
     };
     @GetMapping("/{conversationId}")
     public ResponseEntity<List<MessageResponse>> getMessages(@PathVariable String conversationId){
