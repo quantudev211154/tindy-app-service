@@ -78,8 +78,14 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageResponse> getMessages(Integer conversationId) {
         List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
-
-        return MapData.mapList(messages,MessageResponse.class);
+        List<MessageResponse> messageResponses = MapData.mapList(messages,MessageResponse.class);
+        for(MessageResponse message: messageResponses){
+            if(message.getType().equals("FILE")||message.getType().equals("IMAGE")||message.getType().equals("AUDIO")){
+                List<AttachmentResponse> attachmentResponseList = MapData.mapList(attachmentRepository.findAttachmentsByMessageId(message.getId()), AttachmentResponse.class);
+                message.setAttachmentResponseList(attachmentResponseList);
+            }
+        }
+        return messageResponses;
     }
 
     @Override
