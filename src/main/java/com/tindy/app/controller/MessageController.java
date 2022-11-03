@@ -24,7 +24,7 @@ public class MessageController {
     private final AttachmentService attachmentService;
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<MessageResponse> saveMessage(@RequestParam String conversationId,@RequestParam String senderId,
-                                                       @RequestParam String messageType, @RequestParam String message, @RequestParam("file") List<MultipartFile> file) throws IOException {
+                                                       @RequestParam String messageType, @RequestParam String message, @RequestParam( value = "file", required = false) List<MultipartFile> file) throws IOException {
 
         if(file.size() > 1){
             return ResponseEntity.ok().body(messageService.saveMessage(conversationId,senderId,messageType, message,file));
