@@ -26,7 +26,7 @@ public class MessageController {
     public ResponseEntity<MessageResponse> saveMessage(@RequestParam String conversationId,@RequestParam String senderId,
                                                        @RequestParam String messageType, @RequestParam String message, @RequestParam( value = "file", required = false) List<MultipartFile> file) throws IOException {
 
-        if(file.size() > 1){
+        if(file != null){
             return ResponseEntity.ok().body(messageService.saveMessage(conversationId,senderId,messageType, message,file));
         }else{
             return ResponseEntity.ok().body(messageService.saveMessage(conversationId,senderId,messageType, message,null));
