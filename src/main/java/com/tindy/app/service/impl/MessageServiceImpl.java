@@ -90,8 +90,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageResponse deleteMessage(Integer messageId) {
-        MessageResponse messageResponse = MapData.mapOne(messageRepository.findById(messageId).orElse(null), MessageResponse.class);
-        messageResponse.setDelete(true);
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new NullPointerException());
+        message.setDelete(true);
+        MessageResponse messageResponse = MapData.mapOne(messageRepository.save(message), MessageResponse.class);
         return messageResponse;
     }
 }
