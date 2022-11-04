@@ -54,4 +54,8 @@ public class MessageController {
     public ResponseEntity<?> deleteMessage(@PathVariable Integer id){
         return ResponseEntity.ok().body(messageService.deleteMessage(id));
     }
+    @PostMapping("/forward/{conversationId}")
+    public ResponseEntity<?> forwardMessage(@PathVariable Integer conversationId, @RequestBody MessageRequest messageRequest){
+        return ResponseEntity.ok().body(messageService.forwardMessage(messageRequest,conversationId));
+    }
 }

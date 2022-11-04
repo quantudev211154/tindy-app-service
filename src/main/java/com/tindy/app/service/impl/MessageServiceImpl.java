@@ -4,10 +4,7 @@ import com.tindy.app.dto.request.MessageRequest;
 import com.tindy.app.dto.respone.AttachmentResponse;
 import com.tindy.app.dto.respone.MessageResponse;
 import com.tindy.app.mapper.MapData;
-import com.tindy.app.model.entity.Attachments;
-import com.tindy.app.model.entity.Conversation;
-import com.tindy.app.model.entity.Message;
-import com.tindy.app.model.entity.User;
+import com.tindy.app.model.entity.*;
 import com.tindy.app.model.enums.MessageStatus;
 import com.tindy.app.model.enums.MessageType;
 import com.tindy.app.repository.AttachmentRepository;
@@ -16,6 +13,7 @@ import com.tindy.app.repository.MessageRepository;
 import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,6 +91,30 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageRepository.findById(messageId).orElseThrow(() -> new NullPointerException());
         message.setDelete(true);
         MessageResponse messageResponse = MapData.mapOne(messageRepository.save(message), MessageResponse.class);
+        return messageResponse;
+    }
+
+    @Override
+    public MessageResponse forwardMessage(MessageRequest messageRequest, Integer conversationId) {
+        Message message = MapData.mapOne(messageRequest, Message.class);
+        List<Attachments> attachments = MapData.mapList(messageRequest.getAttachments(), Attachments.class);
+        List<AttachmentResponse> attachmentResponses = new ArrayList<>();
+        message.setConversation(conversationRepository.findById(conversationId).orElseThrow(()-> new UsernameNotFoundException("")));
+        message.setSender(userRepository.findById(messageRequest.getSender().getId()).orElseThrow(()-> new UsernameNotFoundException("")));
+        message.setCreatedAt(new Date(System.currentTimeMillis()));
+        message.setStatus(MessageStatus.SENT);
+        message.setDelete(false);
+        Message messageSaved = messageRepository.save(message);
+        if(attachments.size() >= 1){
+            for(Attachments attachmentsTemp : attachments){
+                attachmentsTemp.setMessage(messageSaved);
+                attachmentsTemp.setCreatedAt(new Date(System.currentTimeMillis()));
+                AttachmentResponse attachmentResponse = MapData.mapOne(attachmentRepository.save(attachmentsTemp), AttachmentResponse.class);
+                attachmentResponses.add(attachmentResponse);
+            }
+        }
+        MessageResponse messageResponse = MapData.mapOne(messageSaved, MessageResponse.class);
+        messageResponse.setAttachmentResponseList(attachmentResponses);
         return messageResponse;
     }
 }
