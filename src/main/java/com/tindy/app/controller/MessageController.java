@@ -46,8 +46,8 @@ public class MessageController {
 
 
     @PostMapping("/attachments/{messageId}")
-    public ResponseEntity<?> downloadAttachment(@PathVariable String messageId, @RequestParam String fileName) throws IOException {
-        return ResponseEntity.ok().body(attachmentService.downloadAttachment(Integer.parseInt(messageId),fileName));
+    public ResponseEntity<?> downloadAttachment(@PathVariable String messageId, @RequestParam String fileName, @RequestParam String location) throws IOException {
+        return ResponseEntity.ok().body(attachmentService.downloadAttachment(Integer.parseInt(messageId),fileName, location));
     }
 
     @PostMapping("/recall/{id}")

@@ -13,6 +13,7 @@ import com.tindy.app.repository.ParticipantRepository;
 import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -44,10 +45,11 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public Object addParticipantGroup(ParticipantRequest participantRequest) {
         Participant participant = MapData.mapOne(participantRequest, Participant.class);
-        Conversation conversation = conversationRepository.findById(participantRequest.getConversation().getId()).get();
+        Conversation conversation = conversationRepository.findById(participantRequest.getConversationId()).get();
 
-        if(participantRequest.getUsers().size() > 2){
-            for(User user: participantRequest.getUsers()){
+        if(participantRequest.getUsersId().size() >= 1 ){
+            for(Integer userId: participantRequest.getUsersId()){
+                User user = userRepository.findById(userId).orElse(null);
                 participant.setUser(user);
                 if(conversation.getCreator().getId() == user.getId()){
                     participant.setRole(ParticipantRole.ADMIN);
@@ -61,7 +63,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 
         }
 
-        return null;
+        return "Add success";
     }
 
     @Override

@@ -18,4 +18,10 @@ public class ParticipantController {
     public ResponseEntity<?> getParticipants(@PathVariable String conversationId){
         return ResponseEntity.ok().body(participantService.getParticipant(Integer.parseInt(conversationId)));
     }
+
+    @PostMapping("/group")
+    public ResponseEntity<?> addParticipantToGroup(@RequestBody ParticipantRequest participantRequest){
+        return ResponseEntity.ok().body(participantService.addParticipantGroup(participantRequest));
+    }
+
 }

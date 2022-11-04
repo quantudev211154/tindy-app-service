@@ -9,5 +9,5 @@ import java.io.IOException;
 
 public interface AttachmentService {
     AttachmentResponse saveAttachment(Integer messageId, MultipartFile file);
-    AttachmentResponse downloadAttachment(Integer messageId, String fileName) throws IOException;
+    AttachmentResponse downloadAttachment(Integer messageId, String fileName, String location) throws IOException;
 }

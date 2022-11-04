@@ -61,15 +61,15 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public AttachmentResponse downloadAttachment(Integer messageId, String fileName) throws IOException {
+    public AttachmentResponse downloadAttachment(Integer messageId, String fileName, String location) throws IOException {
         String destFileName = UUID.randomUUID().toString().concat(uploadService.getExtension(fileName));
-        String destSavePaht = "C:\\Users\\Admin\\Downloads\\"+destFileName;
+        String destSavePath =location +"\\"+destFileName;
 
         Credentials credentials = GoogleCredentials
                 .fromStream(Files.newInputStream(Paths.get("src/main/resources/credentials.json")));
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         Blob blob = storage.get(BlobId.of("tindy-app-service.appspot.com", fileName));
-        blob.downloadTo(Paths.get(destSavePaht));
+        blob.downloadTo(Paths.get(destSavePath));
         return MapData.mapOne(attachmentRepository.findAttachmentsByFileName(fileName), AttachmentResponse.class);
     }
 }
