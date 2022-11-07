@@ -21,10 +21,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +38,7 @@ public class ConversationServiceImpl implements ConversationService {
     private final ParticipantRepository participantRepository;
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
-
+    private final UploadService uploadService;
     @Override
     public ConversationResponse createConversation(ConversationRequest conversationRequest) {
         Conversation conversation = new Conversation();
@@ -96,6 +100,37 @@ public class ConversationServiceImpl implements ConversationService {
         }
 
         return conversationResponses;
+    }
+
+    @Override
+    public ConversationResponse modifiedAvatarImageGroup(Integer conversationId, MultipartFile multipartFile, String name) throws IOException {
+        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new NullPointerException());
+        if(conversation.getType().equals(ConversationType.GROUP)){
+            if(multipartFile != null){
+                String fileName = multipartFile.getOriginalFilename();
+                assert fileName != null;
+                fileName = UUID.randomUUID().toString().concat(uploadService.getExtension(fileName));
+                File file = uploadService.convertToFile(multipartFile,fileName);
+                String url = uploadService.uploadFile(file,fileName);
+                file.delete();
+
+                conversation.setAvatar(url);
+            }
+            if(!name.equals("")){
+                conversation.setTitle(name);
+            }
+        }
+        return MapData.mapOne(conversationRepository.save(conversation), ConversationResponse.class);
+    }
+
+    @Override
+    public Boolean deleteConversation(Integer conversationId) {
+        try {
+            conversationRepository.delete(conversationRepository.findById(conversationId).orElse(null));
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 
 }

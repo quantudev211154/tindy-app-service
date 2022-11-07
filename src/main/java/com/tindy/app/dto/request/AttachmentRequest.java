@@ -18,6 +18,7 @@ public class AttachmentRequest {
     private Message message;
     private String thumbnail;
     private String fileUrl;
+    private String fileName;
     private Date createdAt;
     private Date updatedAt;
 }
