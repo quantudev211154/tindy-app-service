@@ -46,7 +46,7 @@ public class ConversationServiceImpl implements ConversationService {
         conversation.setCreator(userRepository.findById(conversationRequest.getUser().getId()).orElseThrow(() -> new UsernameNotFoundException("User not found!")));
         conversation.setCreatedAt(new Date(System.currentTimeMillis()));
         conversation.setStatus(ConversationStatus.ACTIVE);
-        if (conversationRequest.getUsersId().size() <= 2) {
+        if (conversationRequest.getPhones().size() <= 2) {
             conversation.setType(ConversationType.SINGLE);
         } else {
             conversation.setType(ConversationType.GROUP);
@@ -54,22 +54,20 @@ public class ConversationServiceImpl implements ConversationService {
         }
         ConversationResponse conversationResponse = MapData.mapOne(conversationRepository.save(conversation), ConversationResponse.class);
         List<ParticipantRespone> participantRespones = new ArrayList<>();
-        for (Integer id : conversationRequest.getUsersId()) {
-            System.out.println(id);
+        for (String phone : conversationRequest.getPhones()) {
             Participant participant = new Participant();
             participant.setConversation(MapData.mapOne(conversationResponse, Conversation.class));
-            participant.setUser(userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Not found user")));
-            System.out.println(conversationRequest.getUser().getId() == id);
-            if (conversationRequest.getUser().getId() == id) {
+            participant.setUser(userRepository.findByPhone(phone).orElseThrow(() -> new UsernameNotFoundException("Not found user")));
+            if (conversationRequest.getUser().getId() == participant.getUser().getId()) {
                 participant.setRole(ParticipantRole.ADMIN);
             } else {
                 participant.setRole(ParticipantRole.MEM);
-                if (conversationRequest.getUsersId().size() <= 2) {
+                if (conversationRequest.getPhones().size() <= 2) {
                     conversationResponse.setAvatar(participant.getUser().getAvatar());
                 }
             }
             participant.setCreatedAt(new Date(System.currentTimeMillis()));
-            if (conversationRequest.getUsersId().size() > 2) {
+            if (conversationRequest.getPhones().size() > 2) {
                 participant.setType(ParticipantType.GROUP);
             } else {
                 participant.setType(ParticipantType.SINGLE);

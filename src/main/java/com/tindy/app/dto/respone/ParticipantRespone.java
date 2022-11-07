@@ -20,5 +20,5 @@ public class ParticipantRespone {
     private Date createdAt;
     private Date updateAt;
     private String nickName;
-
+    private String role;
 }

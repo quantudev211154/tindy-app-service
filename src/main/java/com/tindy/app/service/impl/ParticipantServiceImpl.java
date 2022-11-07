@@ -14,6 +14,7 @@ import com.tindy.app.repository.UserRepository;
 import com.tindy.app.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -69,5 +70,29 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public List<ParticipantRespone> getParticipant(Integer conversationId) {
         return MapData.mapList(participantRepository.getParticipantByConversationId(conversationId), ParticipantRespone.class);
+    }
+
+    @Override
+    public Boolean removeParticipant(Integer userId, Integer participantId) {
+        try {
+            Participant admin = participantRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("Participant not found"));
+            if(admin.getRole().equals(ParticipantRole.ADMIN)){
+                participantRepository.delete(participantRepository.findById(participantId).orElse(null));
+                return true;
+            }
+            return false;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean outGroupConversation(Integer participantId) {
+        try {
+            participantRepository.delete(participantRepository.findById(participantId).orElseThrow(() -> new UsernameNotFoundException("Participant not found")));
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 }

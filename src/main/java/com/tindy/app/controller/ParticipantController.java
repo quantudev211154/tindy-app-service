@@ -24,4 +24,28 @@ public class ParticipantController {
         return ResponseEntity.ok().body(participantService.addParticipantGroup(participantRequest));
     }
 
+    @DeleteMapping("/group")
+    public ResponseEntity<?> removeParticipant(@RequestParam Integer adminId, @RequestParam Integer participantId){
+        try {
+            if (participantService.removeParticipant(adminId,participantId)){
+                return ResponseEntity.ok().body("Participant is removed");
+            }else {
+                return ResponseEntity.badRequest().body("Something is wrong");
+            }
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Something is wrong");
+        }
+    }
+
+    @DeleteMapping("/group/{id}")
+    public ResponseEntity<?> outGroupConversation(@PathVariable Integer id){
+        try {
+            if(participantService.outGroupConversation(id)){
+                return ResponseEntity.ok().body("You outed of this group");
+            }
+            return ResponseEntity.badRequest().body("Some thing is wrong");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Some thing is wrong");
+        }
+    }
 }

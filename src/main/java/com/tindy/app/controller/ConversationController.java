@@ -35,10 +35,14 @@ public class ConversationController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteConversation(@PathVariable Integer id){
         try {
-            conversationService.deleteConversation(id);
-            return ResponseEntity.ok().body("Delete Success");
+            if( conversationService.deleteConversation(id)){
+                return ResponseEntity.ok().body("Delete Success");
+            }else {
+                return ResponseEntity.badRequest().body("Something is wrong");
+            }
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Something is wrong");
+
         }
     }
 }
