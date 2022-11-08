@@ -12,4 +12,5 @@ public interface ParticipantService {
     List<ParticipantRespone> getParticipant(Integer conversationId);
     Boolean removeParticipant(Integer userId, Integer participant);
     Boolean outGroupConversation(Integer participantId);
+    ParticipantRespone grantPermission(Integer adminId, Integer participantId, String role);
 }

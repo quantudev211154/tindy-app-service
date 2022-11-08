@@ -95,4 +95,15 @@ public class ParticipantServiceImpl implements ParticipantService {
             return false;
         }
     }
+
+    @Override
+    public ParticipantRespone grantPermission(Integer adminId, Integer participantId, String role) {
+        Participant admin = participantRepository.findById(adminId).orElseThrow(() -> new UsernameNotFoundException("Not found admin"));
+        if(admin.getRole().equals(ParticipantRole.ADMIN)){
+            Participant participant = participantRepository.findById(participantId).orElseThrow(() -> new UsernameNotFoundException("Participant not found!"));
+            participant.setRole(ParticipantRole.valueOf(role));
+            return MapData.mapOne(participantRepository.save(participant),ParticipantRespone.class);
+        }
+        return null;
+    }
 }

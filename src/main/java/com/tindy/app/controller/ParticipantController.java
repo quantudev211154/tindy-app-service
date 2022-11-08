@@ -1,6 +1,7 @@
 package com.tindy.app.controller;
 
 import com.tindy.app.dto.request.ParticipantRequest;
+import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -46,6 +47,16 @@ public class ParticipantController {
             return ResponseEntity.badRequest().body("Some thing is wrong");
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Some thing is wrong");
+        }
+    }
+
+    @PostMapping("/grant")
+    public ResponseEntity<?> grantPermission(@RequestParam Integer adminId, @RequestParam Integer participantId, @RequestParam String role){
+        ParticipantRespone participantRespone = participantService.grantPermission(adminId,participantId,role);
+        if(participantRespone != null){
+            return ResponseEntity.ok().body(participantRespone);
+        }else {
+            return ResponseEntity.badRequest().body("Something is wrong");
         }
     }
 }
