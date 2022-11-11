@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 @Service
@@ -45,23 +46,26 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public Object addParticipantGroup(ParticipantRequest participantRequest) {
-        Participant participant = MapData.mapOne(participantRequest, Participant.class);
         Conversation conversation = conversationRepository.findById(participantRequest.getConversationId()).get();
+        if(participantRequest.getPhones().size() >= 1 ){
+            for(String phone: participantRequest.getPhones()){
+                User user = userRepository.findByPhone(phone).orElse(null);
+                Participant temp = participantRepository.findParticipantByUserIdAndConversationId(user.getId(), conversation.getId()).orElse(null);
 
-        if(participantRequest.getUsersId().size() >= 1 ){
-            for(Integer userId: participantRequest.getUsersId()){
-                User user = userRepository.findById(userId).orElse(null);
-                participant.setUser(user);
-                if(conversation.getCreator().getId() == user.getId()){
-                    participant.setRole(ParticipantRole.ADMIN);
-                }else{
-                    participant.setRole(ParticipantRole.MEM);
+                if(temp == null){
+                    Participant participant = new Participant();
+                    participant.setConversation(conversation);
+                    participant.setUser(user);
+                    if(conversation.getCreator().getId() == user.getId()){
+                        participant.setRole(ParticipantRole.ADMIN);
+                    }else{
+                        participant.setRole(ParticipantRole.MEM);
+                    }
+                    participant.setCreatedAt(new Date(System.currentTimeMillis()));
+                    participant.setType(ParticipantType.GROUP);
+                    participantRepository.save(participant);
                 }
-                participant.setCreatedAt(new Date(System.currentTimeMillis()));
-                participant.setType(ParticipantType.GROUP);
-                participantRepository.save(participant);
             }
-
         }
 
         return "Add success";

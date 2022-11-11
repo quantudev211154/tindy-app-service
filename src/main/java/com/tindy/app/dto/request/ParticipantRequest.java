@@ -19,7 +19,7 @@ public class ParticipantRequest {
 
     private Integer conversationId;
 
-    private List<Integer> usersId;
+    private List<String> phones;
 
     private String status;
     private Date createdAt;

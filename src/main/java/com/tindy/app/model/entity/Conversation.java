@@ -2,10 +2,7 @@ package com.tindy.app.model.entity;
 
 import com.tindy.app.model.enums.ConversationStatus;
 import com.tindy.app.model.enums.ConversationType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,6 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
