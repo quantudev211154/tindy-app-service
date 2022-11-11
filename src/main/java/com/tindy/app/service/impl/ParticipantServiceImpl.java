@@ -47,6 +47,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public Object addParticipantGroup(ParticipantRequest participantRequest) {
         Conversation conversation = conversationRepository.findById(participantRequest.getConversationId()).get();
+        List<ParticipantRespone> participantRespones = new ArrayList<>();
         if(participantRequest.getPhones().size() >= 1 ){
             for(String phone: participantRequest.getPhones()){
                 User user = userRepository.findByPhone(phone).orElse(null);
@@ -63,12 +64,13 @@ public class ParticipantServiceImpl implements ParticipantService {
                     }
                     participant.setCreatedAt(new Date(System.currentTimeMillis()));
                     participant.setType(ParticipantType.GROUP);
-                    participantRepository.save(participant);
+                    Participant participantSaved = participantRepository.save(participant);
+                    participantRespones.add(MapData.mapOne(participantSaved, ParticipantRespone.class));
                 }
             }
         }
 
-        return "Add success";
+        return participantRespones;
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.tindy.app.dto.request.ParticipantRequest;
 import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public class ParticipantController {
         return ResponseEntity.ok().body(participantService.addParticipantGroup(participantRequest));
     }
 
-    @PostMapping("/group")
+    @PostMapping("/group/participant")
     public ResponseEntity<?> removeParticipant(@RequestParam Integer adminId, @RequestParam Integer participantId){
         try {
             if (participantService.removeParticipant(adminId,participantId)){
