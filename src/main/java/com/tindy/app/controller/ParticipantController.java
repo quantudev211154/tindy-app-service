@@ -25,7 +25,7 @@ public class ParticipantController {
         return ResponseEntity.ok().body(participantService.addParticipantGroup(participantRequest));
     }
 
-    @DeleteMapping("/group")
+    @PostMapping("/group")
     public ResponseEntity<?> removeParticipant(@RequestParam Integer adminId, @RequestParam Integer participantId){
         try {
             if (participantService.removeParticipant(adminId,participantId)){
