@@ -58,4 +58,14 @@ public class ParticipantController {
             return ResponseEntity.badRequest().body("Something is wrong");
         }
     }
+
+    @PutMapping("/mute")
+    public ResponseEntity<?> muteParticipant(@RequestParam  Integer adminId, @RequestParam Integer participantId, @RequestParam String status){
+        ParticipantRespone participantRespone = participantService.muteParticipant(adminId,participantId, status);
+        if(participantRespone != null){
+            return ResponseEntity.ok().body(participantRespone);
+        }else {
+            return ResponseEntity.badRequest().body("Something is wrong");
+        }
+    }
 }

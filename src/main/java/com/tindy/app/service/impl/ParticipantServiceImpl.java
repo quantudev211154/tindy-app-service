@@ -7,6 +7,7 @@ import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.entity.Participant;
 import com.tindy.app.model.entity.User;
 import com.tindy.app.model.enums.ParticipantRole;
+import com.tindy.app.model.enums.ParticipantSatus;
 import com.tindy.app.model.enums.ParticipantType;
 import com.tindy.app.repository.ConversationRepository;
 import com.tindy.app.repository.ParticipantRepository;
@@ -108,6 +109,17 @@ public class ParticipantServiceImpl implements ParticipantService {
         if(admin.getRole().equals(ParticipantRole.ADMIN)){
             Participant participant = participantRepository.findById(participantId).orElseThrow(() -> new UsernameNotFoundException("Participant not found!"));
             participant.setRole(ParticipantRole.valueOf(role));
+            return MapData.mapOne(participantRepository.save(participant),ParticipantRespone.class);
+        }
+        return null;
+    }
+
+    @Override
+    public ParticipantRespone muteParticipant(Integer adminId, Integer participantId, String status) {
+        Participant admin = participantRepository.findById(adminId).orElseThrow(() -> new UsernameNotFoundException("Not found participant"));
+        if(admin.getRole().equals(ParticipantRole.ADMIN)){
+            Participant participant = participantRepository.findById(participantId).orElseThrow(() -> new UsernameNotFoundException("Participant not found"));
+            participant.setStatus(ParticipantSatus.valueOf(status));
             return MapData.mapOne(participantRepository.save(participant),ParticipantRespone.class);
         }
         return null;

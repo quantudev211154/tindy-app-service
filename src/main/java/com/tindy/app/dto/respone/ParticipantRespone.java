@@ -21,4 +21,5 @@ public class ParticipantRespone {
     private Date updateAt;
     private String nickName;
     private String role;
+    private String status;
 }

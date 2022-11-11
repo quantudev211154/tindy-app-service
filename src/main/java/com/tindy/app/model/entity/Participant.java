@@ -36,4 +36,6 @@ public class Participant {
     private ParticipantType type;
     @Enumerated(EnumType.STRING)
     private ParticipantRole role;
+    @Enumerated(EnumType.STRING)
+    private ParticipantSatus status;
 }
