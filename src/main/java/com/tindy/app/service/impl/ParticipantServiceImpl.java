@@ -65,6 +65,8 @@ public class ParticipantServiceImpl implements ParticipantService {
                     }
                     participant.setCreatedAt(new Date(System.currentTimeMillis()));
                     participant.setType(ParticipantType.GROUP);
+                    participant.setStatus(ParticipantSatus.STABLE);
+                    participant.setNickName(user.getFullName());
                     Participant participantSaved = participantRepository.save(participant);
                     participantRespones.add(MapData.mapOne(participantSaved, ParticipantRespone.class));
                 }
