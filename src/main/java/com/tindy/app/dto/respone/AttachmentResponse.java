@@ -14,9 +14,9 @@ import java.util.Date;
 @AllArgsConstructor
 public class AttachmentResponse {
     private Integer id;
-    private Message message;
     private String thumbnail;
     private String fileUrl;
     private Date createdAt;
     private Date updatedAt;
+    private String fileName;
 }

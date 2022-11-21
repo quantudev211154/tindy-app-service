@@ -16,11 +16,12 @@ import java.util.List;
 public class ConversationResponse {
     private Integer id;
     private String title;
-    private User creator;
+    private UserRespone creator;
     private Date createdAt;
     private Date updatedAt;
     private String status;
     private String type;
     private String avatar;
-    private List<ParticipantRespone> participantRespones;
+    private List<ParticipantRespone> participantResponse;
+    private MessageResponse messageLatest;
 }

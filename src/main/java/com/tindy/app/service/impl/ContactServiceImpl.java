@@ -79,4 +79,13 @@ public class ContactServiceImpl implements ContactService {
         contactRespone.setAvatar(userRepository.findByPhone(contactRespone.getPhone()).orElseThrow(() -> new UsernameNotFoundException("User not found!")).getAvatar());
         return contactRespone;
     }
+
+    @Override
+    public Boolean isContactExist(String phone, Integer userId) {
+        Contact contact = contactRepository.findContactsByPhoneAndUserId(phone, userId);
+        if(contact != null){
+            return true;
+        }
+        return false;
+    }
 }

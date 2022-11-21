@@ -9,4 +9,6 @@ public interface UserService {
     UserRespone uploadFile(MultipartFile multipartFile, Integer userId);
     UserRespone updateUser(UserRequest userRequest, Integer userId);
     UserRespone getUserInfoByPhone(String phone);
+    Boolean changeForgetPassword(String phone);
+    UserRespone changePassword(String phone, String oldPassword,String newPassword);
 }

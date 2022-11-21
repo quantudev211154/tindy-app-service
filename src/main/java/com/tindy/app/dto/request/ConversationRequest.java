@@ -17,9 +17,9 @@ public class ConversationRequest {
 
     private String title;
     private User user;
-    private List<Integer> usersId;
+    private List<String> phones;
     private Date createdAt;
     private Date updatedAt;
     private String status;
-
+    private String avatar;
 }

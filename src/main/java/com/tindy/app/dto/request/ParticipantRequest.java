@@ -17,9 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ParticipantRequest {
 
-    private Conversation conversation;
+    private Integer conversationId;
 
-    private List<User> users;
+    private List<String> phones;
 
     private String status;
     private Date createdAt;

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,9 +22,16 @@ public class MessageController {
 
     private final MessageService messageService;
     private final AttachmentService attachmentService;
-    @PostMapping
-    public ResponseEntity<MessageResponse> saveMessage(@RequestBody MessageRequest messageRequest){
-        return ResponseEntity.ok().body(messageService.saveMessage(messageRequest));
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<MessageResponse> saveMessage(@RequestParam String conversationId,@RequestParam String senderId,
+                                                       @RequestParam String messageType, @RequestParam String message, @RequestParam( value = "file", required = false) List<MultipartFile> file) throws IOException {
+
+        if(file != null){
+            return ResponseEntity.ok().body(messageService.saveMessage(conversationId,senderId,messageType, message,file));
+        }else{
+            return ResponseEntity.ok().body(messageService.saveMessage(conversationId,senderId,messageType, message,null));
+
+        }
     };
     @GetMapping("/{conversationId}")
     public ResponseEntity<List<MessageResponse>> getMessages(@PathVariable String conversationId){
@@ -36,4 +44,18 @@ public class MessageController {
         return ResponseEntity.ok().body(attachmentService.saveAttachment(messageId,file));
     }
 
+
+    @PostMapping("/attachments/{messageId}")
+    public ResponseEntity<?> downloadAttachment(@PathVariable String messageId, @RequestParam String fileName, @RequestParam String location) throws IOException {
+        return ResponseEntity.ok().body(attachmentService.downloadAttachment(Integer.parseInt(messageId),fileName, location));
+    }
+
+    @PostMapping("/recall/{id}")
+    public ResponseEntity<?> deleteMessage(@PathVariable Integer id){
+        return ResponseEntity.ok().body(messageService.deleteMessage(id));
+    }
+    @PostMapping("/forward/{conversationId}")
+    public ResponseEntity<?> forwardMessage(@PathVariable Integer conversationId, @RequestBody MessageRequest messageRequest){
+        return ResponseEntity.ok().body(messageService.forwardMessage(messageRequest,conversationId));
+    }
 }

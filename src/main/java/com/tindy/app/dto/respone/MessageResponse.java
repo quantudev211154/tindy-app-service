@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -14,10 +16,11 @@ import java.util.Date;
 public class MessageResponse {
     private Integer id;
     private Conversation conversation;
-    private User sender;
+    private UserRespone sender;
     private String type;
     private String message;
     private Date createdAt;
     private boolean isDelete;
     private String status;
+    private List<AttachmentResponse> attachmentResponseList;
 }

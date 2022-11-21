@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface ContactRepository extends JpaRepository<Contact,Integer> {
 
     List<Contact> findContactsByUserId(Integer id);
+    Contact findContactsByPhoneAndUserId(String phone, Integer userId);
 }
