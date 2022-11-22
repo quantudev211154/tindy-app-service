@@ -117,4 +117,10 @@ public class MessageServiceImpl implements MessageService {
         messageResponse.setAttachmentResponseList(attachmentResponses);
         return messageResponse;
     }
+
+    @Override
+    public List<MessageResponse> findMessageByKeyword(String keyword, Integer conversationId) {
+        List<MessageResponse> messageResponses = MapData.mapList(messageRepository.findMessagesByMessageContainingAndConversationId(keyword, conversationId), MessageResponse.class);
+        return MapData.mapList(messageRepository.findMessagesByMessageContainingAndConversationId(keyword, conversationId), MessageResponse.class);
+    }
 }

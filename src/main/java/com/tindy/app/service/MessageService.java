@@ -13,4 +13,6 @@ public interface MessageService {
     MessageResponse deleteMessage(Integer messageId);
 
     MessageResponse forwardMessage(MessageRequest messageRequest, Integer conversationId);
+
+    List<MessageResponse> findMessageByKeyword(String keyword, Integer conversationId);
 }

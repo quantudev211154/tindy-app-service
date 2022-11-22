@@ -58,4 +58,10 @@ public class MessageController {
     public ResponseEntity<?> forwardMessage(@PathVariable Integer conversationId, @RequestBody MessageRequest messageRequest){
         return ResponseEntity.ok().body(messageService.forwardMessage(messageRequest,conversationId));
     }
+
+    @GetMapping("/find/{conversationId}")
+    public ResponseEntity<?> findMessageByKeyword(@RequestParam String keyword, @PathVariable Integer conversationId){
+
+        return ResponseEntity.ok().body(messageService.findMessageByKeyword(keyword,conversationId));
+    }
 }
