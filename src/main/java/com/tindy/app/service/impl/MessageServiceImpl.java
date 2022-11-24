@@ -31,7 +31,7 @@ public class MessageServiceImpl implements MessageService {
     private final AttachmentRepository attachmentRepository;
     private final UploadService uploadService;
     @Override
-    public MessageResponse saveMessage(String conversationId, String senderId, String messageType, String message, List<MultipartFile> files) throws IOException {
+    public MessageResponse saveMessage(String conversationId, String senderId, String messageType, String message, List<MultipartFile> files, Integer replyTo) throws IOException {
         Message messageSave = new Message();
         Conversation conversation = conversationRepository.findById(Integer.valueOf(conversationId)).orElse(null);
         User sender = userRepository.findById(Integer.valueOf(senderId)).orElse(null);
@@ -42,9 +42,12 @@ public class MessageServiceImpl implements MessageService {
         messageSave.setDelete(false);
         messageSave.setMessage(message);
         messageSave.setMessageType(MessageType.valueOf(messageType));
+        messageSave.setReplyTo(replyTo);
         Message messageSaved = messageRepository.save(messageSave);
         MessageResponse messageResponse = MapData.mapOne(messageSaved,MessageResponse.class);
-
+        if(replyTo != null){
+            messageResponse.setReplyTo(MapData.mapOne(messageRepository.findById(replyTo).orElse(null),MessageResponse.class));
+        }
         List<AttachmentResponse> attachmentResponses = new ArrayList<>();
         if(files != null){
             for(MultipartFile multipartFile : files){
@@ -76,7 +79,16 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageResponse> getMessages(Integer conversationId) {
         List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
-        List<MessageResponse> messageResponses = MapData.mapList(messages,MessageResponse.class);
+//        List<MessageResponse> messageResponses = MapData.mapList(messages,MessageResponse.class);
+        List<MessageResponse> messageResponses = new ArrayList<>();
+
+        for(Message message : messages){
+            MessageResponse messageResponse = MapData.mapOne(message,MessageResponse.class);
+            if(message.getReplyTo() != null){
+                messageResponse.setReplyTo(MapData.mapOne(messageRepository.findById(message.getReplyTo()).orElseThrow(()-> new UsernameNotFoundException("Not found Message")), MessageResponse.class));
+            }
+            messageResponses.add(messageResponse);
+        }
         for(MessageResponse message: messageResponses){
             if(message.getType().equals("FILE")||message.getType().equals("IMAGE")||message.getType().equals("AUDIO")){
                 List<AttachmentResponse> attachmentResponseList = MapData.mapList(attachmentRepository.findAttachmentsByMessageId(message.getId()), AttachmentResponse.class);
@@ -116,5 +128,10 @@ public class MessageServiceImpl implements MessageService {
         MessageResponse messageResponse = MapData.mapOne(messageSaved, MessageResponse.class);
         messageResponse.setAttachmentResponseList(attachmentResponses);
         return messageResponse;
+    }
+
+    @Override
+    public List<MessageResponse> findMessageByKeyword(String keyword, Integer conversationId) {
+        return MapData.mapList(messageRepository.findMessagesByMessageContainingAndConversationId(keyword, conversationId), MessageResponse.class);
     }
 }

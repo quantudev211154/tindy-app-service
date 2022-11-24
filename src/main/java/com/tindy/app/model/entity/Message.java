@@ -32,5 +32,5 @@ public class Message {
     private boolean isDelete;
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
-
+    private Integer replyTo;
 }
