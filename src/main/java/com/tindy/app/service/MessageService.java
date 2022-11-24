@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface MessageService {
-    MessageResponse saveMessage(String conversationId, String senderId, String messageType, String message, List<MultipartFile> files) throws IOException;
+    MessageResponse saveMessage(String conversationId, String senderId, String messageType, String message, List<MultipartFile> files, Integer replyTo) throws IOException;
     List<MessageResponse> getMessages(Integer conversationId);
     MessageResponse deleteMessage(Integer messageId);
 
