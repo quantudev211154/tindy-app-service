@@ -23,4 +23,5 @@ public class MessageResponse {
     private boolean isDelete;
     private String status;
     private List<AttachmentResponse> attachmentResponseList;
+    private MessageResponse replyTo;
 }

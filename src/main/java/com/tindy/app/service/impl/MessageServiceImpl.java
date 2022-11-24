@@ -76,7 +76,16 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageResponse> getMessages(Integer conversationId) {
         List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
-        List<MessageResponse> messageResponses = MapData.mapList(messages,MessageResponse.class);
+//        List<MessageResponse> messageResponses = MapData.mapList(messages,MessageResponse.class);
+        List<MessageResponse> messageResponses = new ArrayList<>();
+
+        for(Message message : messages){
+            MessageResponse messageResponse = MapData.mapOne(message,MessageResponse.class);
+            if(message.getReplyTo() != null){
+                messageResponse.setReplyTo(MapData.mapOne(messageRepository.findById(message.getReplyTo()).orElseThrow(()-> new UsernameNotFoundException("Not found Message")), MessageResponse.class));
+            }
+            messageResponses.add(messageResponse);
+        }
         for(MessageResponse message: messageResponses){
             if(message.getType().equals("FILE")||message.getType().equals("IMAGE")||message.getType().equals("AUDIO")){
                 List<AttachmentResponse> attachmentResponseList = MapData.mapList(attachmentRepository.findAttachmentsByMessageId(message.getId()), AttachmentResponse.class);
@@ -120,7 +129,6 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageResponse> findMessageByKeyword(String keyword, Integer conversationId) {
-        List<MessageResponse> messageResponses = MapData.mapList(messageRepository.findMessagesByMessageContainingAndConversationId(keyword, conversationId), MessageResponse.class);
         return MapData.mapList(messageRepository.findMessagesByMessageContainingAndConversationId(keyword, conversationId), MessageResponse.class);
     }
 }
