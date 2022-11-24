@@ -67,7 +67,8 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Set-Cookie", "Authorization", "Cache-Control", "Content-Type"));
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173","http://localhost:5173","https://fe-tindi-n13-ts-redux-kv4a.vercel.app")); // evn
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173","http://localhost:5173",
+                "https://fe-tindi-n13-ts-redux-kv4a.vercel.app","exp://192.168.1.2:19000")); // evn
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration.applyPermitDefaultValues());
