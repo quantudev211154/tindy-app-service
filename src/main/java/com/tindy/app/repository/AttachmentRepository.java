@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface AttachmentRepository extends JpaRepository<Attachments,Integer> {
     Optional<Attachments> findAttachmentsByFileName(String fileName);
     List<Attachments> findAttachmentsByMessageId(Integer id);
+
 }

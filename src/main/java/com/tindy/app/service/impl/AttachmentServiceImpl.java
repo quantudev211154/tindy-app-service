@@ -10,6 +10,7 @@ import com.tindy.app.dto.respone.AttachmentResponse;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Attachments;
 import com.tindy.app.model.entity.Message;
+import com.tindy.app.model.enums.MessageType;
 import com.tindy.app.repository.AttachmentRepository;
 import com.tindy.app.repository.MessageRepository;
 import com.tindy.app.service.AttachmentService;
@@ -23,8 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -71,5 +71,23 @@ public class AttachmentServiceImpl implements AttachmentService {
         Blob blob = storage.get(BlobId.of("tindy-app-service.appspot.com", fileName));
         blob.downloadTo(Paths.get(destSavePath));
         return MapData.mapOne(attachmentRepository.findAttachmentsByFileName(fileName), AttachmentResponse.class);
+    }
+
+    @Override
+    public List<AttachmentResponse> getAttachmentsOnConversation(Integer conversationId) {
+        List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
+        Map<Integer, List<Attachments>> mapAttachment = new HashMap<>();
+        List<Attachments> attachments = new ArrayList<>();
+        for(Message message : messages){
+            if(!message.isDelete() && (message.getMessageType().equals(MessageType.FILE) || message.getMessageType().equals(MessageType.AUDIO) || message.getMessageType().equals(MessageType.IMAGE))){
+                mapAttachment.put(message.getId(),attachmentRepository.findAttachmentsByMessageId(message.getId()));
+            }
+        }
+        for ( Map.Entry<Integer, List<Attachments>> entry : mapAttachment.entrySet()) {
+            Integer key = entry.getKey();
+            List<Attachments>  attachmentsList= entry.getValue();
+            attachments.addAll(attachmentsList);
+        }
+        return MapData.mapList(attachments, AttachmentResponse.class);
     }
 }
