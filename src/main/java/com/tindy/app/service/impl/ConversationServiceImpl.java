@@ -8,10 +8,7 @@ import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.Conversation;
 import com.tindy.app.model.entity.Message;
 import com.tindy.app.model.entity.Participant;
-import com.tindy.app.model.enums.ConversationStatus;
-import com.tindy.app.model.enums.ConversationType;
-import com.tindy.app.model.enums.ParticipantRole;
-import com.tindy.app.model.enums.ParticipantType;
+import com.tindy.app.model.enums.*;
 import com.tindy.app.repository.ConversationRepository;
 import com.tindy.app.repository.MessageRepository;
 import com.tindy.app.repository.ParticipantRepository;
@@ -67,6 +64,7 @@ public class ConversationServiceImpl implements ConversationService {
                 }
             }
             participant.setCreatedAt(new Date(System.currentTimeMillis()));
+            participant.setStatus(ParticipantSatus.STABLE);
             if (conversationRequest.getPhones().size() > 2) {
                 participant.setType(ParticipantType.GROUP);
             } else {

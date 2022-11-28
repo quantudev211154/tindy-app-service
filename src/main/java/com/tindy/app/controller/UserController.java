@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PutMapping( value = "/{id}", consumes = "multipart/form-data")
-    public ResponseEntity<?> modifyUser(@RequestParam String fullName, @RequestParam("file")MultipartFile file , @PathVariable String id) throws IOException {
+    public ResponseEntity<?> modifyUser(@RequestParam(required = false) String fullName, @RequestParam(value = "file", required = false) MultipartFile file , @PathVariable String id) throws IOException {
         return ResponseEntity.ok().body(userService.updateUser(fullName, Integer.parseInt(id),file));
     }
     @GetMapping("/{id}")
