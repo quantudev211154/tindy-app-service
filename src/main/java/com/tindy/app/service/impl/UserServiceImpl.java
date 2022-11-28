@@ -106,4 +106,14 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+
+    @Override
+    public Boolean checkPasswordModify(String password, String phone) {
+        User user = userRepository.findByPhone(phone).orElseThrow(()-> new UsernameNotFoundException("User not exist"));
+
+        if(passwordEncoder.matches(password,user.getPassword())){
+            return true;
+        }
+        return false;
+    }
 }
