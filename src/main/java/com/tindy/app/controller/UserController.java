@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -36,9 +37,9 @@ public class UserController {
         return ResponseEntity.ok().body(contactService.getContactsByUser(Integer.parseInt(userId)));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> modifyUser(@RequestBody UserRequest userRequest, @PathVariable String id){
-        return ResponseEntity.ok().body(userService.updateUser(userRequest, Integer.parseInt(id)));
+    @PutMapping( value = "/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<?> modifyUser(@RequestParam String fullName, @RequestParam("file")MultipartFile file , @PathVariable String id) throws IOException {
+        return ResponseEntity.ok().body(userService.updateUser(fullName, Integer.parseInt(id),file));
     }
     @GetMapping("/{id}")
     public UserRespone getUserInfo(@PathVariable String id){

@@ -54,20 +54,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRespone updateUser(UserRequest userRequest, Integer userId) {
+    public UserRespone updateUser(String fullName, Integer userId, MultipartFile multipartFile) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("Not found"));
         user.setUpdatedAt(new Date(System.currentTimeMillis()));
-        log.info("HieuLog: "+userRequest.toString());
-
-        if(userRequest.getEmail() != null){
-            user.setEmail(userRequest.getEmail());
-            log.info("HieuLog: "+userRequest.toString());
-
+        if(fullName != null){
+            user.setFullName(fullName);
         }
-        if(userRequest.getFullName() != null){
-            user.setFullName(userRequest.getFullName());
-            log.info(user.toString());
+        if(multipartFile != null){
+            String fileName = multipartFile.getOriginalFilename();
+//            log.info("upload image:  File Name : {}", multipartFile.getOriginalFilename());
+            assert fileName != null;
+            fileName = UUID.randomUUID().toString().concat(uploadService.getExtension(fileName));
+            File file = uploadService.convertToFile(multipartFile,fileName);
 
+            String url = uploadService.uploadFile(file,fileName);
+
+            file.delete();
+
+            user.setAvatar(url);
         }
         User userUpdated = userRepository.save(user);
 

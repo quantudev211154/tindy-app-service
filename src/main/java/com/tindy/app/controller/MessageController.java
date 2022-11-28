@@ -71,4 +71,9 @@ public class MessageController {
     public ResponseEntity<?> deleteMessage(@RequestBody DeleteMessageRequest deleteMessageRequest){
         return ResponseEntity.ok().body(deleteMessageService.deleteMessage(deleteMessageRequest));
     }
+
+    @GetMapping(value = "/attachments/{id}")
+    public ResponseEntity<?> getAttachmentInConversation(@PathVariable Integer id){
+        return ResponseEntity.ok().body(attachmentService.getAttachmentsOnConversation(id));
+    }
 }

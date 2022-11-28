@@ -3,14 +3,12 @@ package com.tindy.app.service.impl;
 import com.tindy.app.dto.request.MessageRequest;
 import com.tindy.app.dto.respone.AttachmentResponse;
 import com.tindy.app.dto.respone.MessageResponse;
+import com.tindy.app.dto.respone.ParticipantRespone;
 import com.tindy.app.mapper.MapData;
 import com.tindy.app.model.entity.*;
 import com.tindy.app.model.enums.MessageStatus;
 import com.tindy.app.model.enums.MessageType;
-import com.tindy.app.repository.AttachmentRepository;
-import com.tindy.app.repository.ConversationRepository;
-import com.tindy.app.repository.MessageRepository;
-import com.tindy.app.repository.UserRepository;
+import com.tindy.app.repository.*;
 import com.tindy.app.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +28,7 @@ public class MessageServiceImpl implements MessageService {
     private final ConversationRepository conversationRepository;
     private final AttachmentRepository attachmentRepository;
     private final UploadService uploadService;
+    private final DeleteMessageRepository deleteMessageRepository;
     @Override
     public MessageResponse saveMessage(String conversationId, String senderId, String messageType, String message, List<MultipartFile> files, Integer replyTo) throws IOException {
         Message messageSave = new Message();
@@ -94,6 +93,12 @@ public class MessageServiceImpl implements MessageService {
                 List<AttachmentResponse> attachmentResponseList = MapData.mapList(attachmentRepository.findAttachmentsByMessageId(message.getId()), AttachmentResponse.class);
                 message.setAttachmentResponseList(attachmentResponseList);
             }
+            List<DeleteMessage> deleteMessages = deleteMessageRepository.findDeleteMessagesByMessageId(message.getId());
+            List<ParticipantRespone> participantDelete = new ArrayList<>();
+            for(DeleteMessage deleteMessage : deleteMessages){
+                participantDelete.add(MapData.mapOne(deleteMessage.getParticipant(), ParticipantRespone.class));
+            }
+            message.setParticipantDeleted(participantDelete);
         }
         return messageResponses;
     }
