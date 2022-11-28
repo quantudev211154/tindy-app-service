@@ -74,6 +74,14 @@ public class UserController {
 
         }
     }
+    @GetMapping(value = "/password/{phone}")
+    public ResponseEntity<?> checkPasswordModify(@PathVariable String phone, @RequestParam String password){
+        if(userService.checkPasswordModify(password,phone)){
+            return ResponseEntity.ok().body("Success");
+        }else {
+            return ResponseEntity.badRequest().body("Password is wrong");
+        }
+    }
 //    @PostMapping("/profile/pic/{fileName}")
 //    public Object download(@PathVariable String fileName) throws IOException {
 //        logger.info("HIT -/download | File Name : {}", fileName);

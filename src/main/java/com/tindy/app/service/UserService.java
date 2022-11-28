@@ -13,4 +13,5 @@ public interface UserService {
     UserRespone getUserInfoByPhone(String phone);
     Boolean changeForgetPassword(String phone);
     UserRespone changePassword(String phone, String oldPassword,String newPassword);
+    Boolean checkPasswordModify(String password, String phone);
 }
