@@ -24,4 +24,5 @@ public class MessageResponse {
     private String status;
     private List<AttachmentResponse> attachmentResponseList;
     private MessageResponse replyTo;
+    private List<ParticipantRespone> participantDeleted;
 }
