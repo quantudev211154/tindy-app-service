@@ -58,11 +58,9 @@ public class ParticipantServiceImpl implements ParticipantService {
                     Participant participant = new Participant();
                     participant.setConversation(conversation);
                     participant.setUser(user);
-                    if(conversation.getCreator().getId() == user.getId()){
-                        participant.setRole(ParticipantRole.ADMIN);
-                    }else{
-                        participant.setRole(ParticipantRole.MEM);
-                    }
+
+                    participant.setRole(ParticipantRole.MEM);
+
                     participant.setCreatedAt(new Date(System.currentTimeMillis()));
                     participant.setType(ParticipantType.GROUP);
                     participant.setStatus(ParticipantSatus.STABLE);
