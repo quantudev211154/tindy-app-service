@@ -65,7 +65,7 @@ public class MessageServiceImpl implements MessageService {
                 file.delete();
                 Attachments attachmentSaved = attachmentRepository.save(attachments);
                 attachmentSaved.setFileUrl(url);
-                attachmentSaved.setThumbnail(fileName);
+                attachmentSaved.setThumbnail(multipartFile.getOriginalFilename());
                 AttachmentResponse attachmentResponse = MapData.mapOne(attachmentSaved, AttachmentResponse.class);
                 attachmentResponses.add(attachmentResponse);
             }
