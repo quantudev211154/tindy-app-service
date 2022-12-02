@@ -55,20 +55,22 @@ public class ConversationServiceImpl implements ConversationService {
             Participant participant = new Participant();
             participant.setConversation(MapData.mapOne(conversationResponse, Conversation.class));
             participant.setUser(userRepository.findByPhone(phone).orElseThrow(() -> new UsernameNotFoundException("Not found user")));
-            if (conversationRequest.getUser().getId() == participant.getUser().getId()) {
-                participant.setRole(ParticipantRole.ADMIN);
-            } else {
-                participant.setRole(ParticipantRole.MEM);
-                if (conversationRequest.getPhones().size() <= 2) {
-                    conversationResponse.setAvatar(participant.getUser().getAvatar());
-                }
-            }
             participant.setCreatedAt(new Date(System.currentTimeMillis()));
             participant.setStatus(ParticipantSatus.STABLE);
             if (conversationRequest.getPhones().size() > 2) {
                 participant.setType(ParticipantType.GROUP);
+                if (conversationRequest.getUser().getId() == participant.getUser().getId()) {
+                    participant.setRole(ParticipantRole.ADMIN);
+                } else {
+                    participant.setRole(ParticipantRole.MEM);
+                    if (conversationRequest.getPhones().size() <= 2) {
+                        conversationResponse.setAvatar(participant.getUser().getAvatar());
+                    }
+                }
             } else {
                 participant.setType(ParticipantType.SINGLE);
+                participant.setRole(ParticipantRole.ADMIN);
+                conversationResponse.setAvatar(participant.getUser().getAvatar());
             }
             participantRespones.add(MapData.mapOne(participantRepository.save(participant), ParticipantRespone.class));
         }
